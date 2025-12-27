@@ -23,10 +23,6 @@ class Server extends Component
      */
     public $transport = 'stdio';
 
-    /**
-     * @var resource Stream resource for logging (typically STDERR)
-     */
-    public $logStream;
 
     /**
      * @var array Collection of registered tools
@@ -279,10 +275,7 @@ class Server extends Component
     {
         switch ($this->transport) {
             case 'stdio':
-                $this->transportInstance = \Yii::createObject([
-                    'class' => Transports\StdioTransport::class,
-                    'logStream' => $this->logStream,
-                ]);
+                $this->transportInstance = new Transports\StdioTransport();
                 break;
 
             default:

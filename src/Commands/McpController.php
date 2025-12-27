@@ -34,16 +34,10 @@ class McpController extends Controller
             // Configure logging to stderr only to avoid interfering with STDOUT JSON-RPC
             $this->configureLogging();
 
-            // Print startup information (optional - can be disabled for debugging)
-            if (getenv('YII2_BOOST_MCP_DEBUG') !== 'false') {
-                $this->printStartupInfo();
-            }
-
             // Create and start the MCP server
             $server = new Server([
                 'basePath' => Yii::getAlias('@app'),
                 'transport' => 'stdio',
-                'logStream' => STDERR,
             ]);
 
             // Start the server (infinite loop until client disconnects)
@@ -52,42 +46,9 @@ class McpController extends Controller
             return ExitCode::OK;
         } catch (\Exception $e) {
             // Log error to stderr
-            fwrite(STDERR, "❌ MCP Server Error: " . $e->getMessage() . "\n");
-            fwrite(STDERR, $e->getTraceAsString() . "\n");
+            fwrite(STDERR, "MCP Server Error: " . $e->getMessage() . "\n");
             return ExitCode::UNSPECIFIED_ERROR;
         }
-    }
-
-    /**
-     * Print startup information to STDERR
-     */
-    private function printStartupInfo()
-    {
-        $basePath = Yii::getAlias('@app');
-        $timestamp = date('Y-m-d H:i:s');
-
-        fwrite(STDERR, "\n");
-        fwrite(STDERR, "╔════════════════════════════════════════════════════════════╗\n");
-        fwrite(STDERR, "║           Yii2 AI Boost - MCP Server Started               ║\n");
-        fwrite(STDERR, "╚════════════════════════════════════════════════════════════╝\n\n");
-
-        fwrite(STDERR, "  📍 Server Information\n");
-        fwrite(STDERR, "  ────────────────────────────────────────────────────────────\n");
-        fwrite(STDERR, "  Status:     ✓ Started at $timestamp\n");
-        fwrite(STDERR, "  Transport:  STDIO (reads from stdin, writes to stdout)\n");
-        fwrite(STDERR, "  Protocol:   JSON-RPC 2.0\n");
-        fwrite(STDERR, "  App Path:   $basePath\n");
-        fwrite(STDERR, "  Tools:      5 available\n\n");
-
-        fwrite(STDERR, "  🔌 MCP Client Instructions\n");
-        fwrite(STDERR, "  ────────────────────────────────────────────────────────────\n");
-        fwrite(STDERR, "  Send JSON-RPC 2.0 requests on stdin.\n");
-        fwrite(STDERR, "  Each request must be a complete JSON object.\n");
-        fwrite(STDERR, "  Example:\n");
-        fwrite(STDERR, "    {\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}\n\n");
-
-        fwrite(STDERR, "  📋 Request Log (all times in local timezone)\n");
-        fwrite(STDERR, "  ────────────────────────────────────────────────────────────\n");
     }
 
     /**

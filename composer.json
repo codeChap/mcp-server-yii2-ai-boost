@@ -1,0 +1,57 @@
+{
+    "name": "codechap/yii2-ai-boost",
+    "description": "MCP Server for Yii2 applications - provides AI context and development tools via Model Context Protocol",
+    "keywords": ["yii2", "mcp", "ai", "assistant", "tools", "guidelines", "claude"],
+    "type": "yii2-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CodeChap",
+            "email": "dev@codechap.io"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/codechap/yii2-ai-boost/issues",
+        "source": "https://github.com/codechap/yii2-ai-boost"
+    },
+    "require": {
+        "php": ">=7.4",
+        "yiisoft/yii2": "~2.0.45"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.2.0",
+        "phpunit/phpunit": "^9.0",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "codechap\\yii2boost\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "codechap\\yii2boost\\tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "bootstrap": "codechap\\yii2boost\\Bootstrap",
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html coverage/",
+        "cs-check": "phpcs --standard=PSR12 src/",
+        "cs-fix": "phpcbf --standard=PSR12 src/",
+        "analyze": "phpstan analyze src/ --level=8"
+    }
+}

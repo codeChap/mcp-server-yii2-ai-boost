@@ -46,7 +46,7 @@ class Server extends Component
      *
      * @throws Exception
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -68,7 +68,7 @@ class Server extends Component
      *
      * @throws Exception
      */
-    public function start()
+    public function start(): void
     {
         if (!$this->transportInstance) {
             throw new Exception('Transport not initialized');
@@ -86,7 +86,7 @@ class Server extends Component
      * @param string $request JSON-RPC request string
      * @return string JSON-RPC response string
      */
-    public function handleRequest($request)
+    public function handleRequest(string $request): string
     {
         try {
             $decoded = json_decode($request, true);
@@ -150,7 +150,7 @@ class Server extends Component
      * @return mixed Result
      * @throws Exception
      */
-    private function dispatch($method, $params)
+    private function dispatch(string $method, array $params): mixed
     {
         switch ($method) {
             case 'initialize':
@@ -184,7 +184,7 @@ class Server extends Component
      * @param array $params Client initialization parameters
      * @return array Server capabilities
      */
-    private function initialize($params)
+    private function initialize(array $params): array
     {
         // Use the client's protocol version if provided, otherwise use our version
         $clientProtocolVersion = $params['protocolVersion'] ?? null;
@@ -208,7 +208,7 @@ class Server extends Component
      *
      * @return array
      */
-    private function listTools()
+    private function listTools(): array
     {
         $tools = [];
         foreach ($this->tools as $name => $tool) {
@@ -229,7 +229,7 @@ class Server extends Component
      * @return mixed Tool result
      * @throws Exception
      */
-    private function callTool($name, $arguments)
+    private function callTool(string $name, array $arguments): mixed
     {
         if (!isset($this->tools[$name])) {
             throw new Exception("Unknown tool: $name");
@@ -244,7 +244,7 @@ class Server extends Component
      *
      * @return array
      */
-    private function listResources()
+    private function listResources(): array
     {
         $resources = [];
         foreach ($this->resources as $uri => $resource) {
@@ -264,7 +264,7 @@ class Server extends Component
      * @return mixed Resource content
      * @throws Exception
      */
-    private function readResource($uri)
+    private function readResource(string $uri): mixed
     {
         if (!isset($this->resources[$uri])) {
             throw new Exception("Unknown resource: $uri");
@@ -277,7 +277,7 @@ class Server extends Component
     /**
      * Register all MCP tools
      */
-    private function registerTools()
+    private function registerTools(): void
     {
         $toolClasses = [
             Tools\ApplicationInfoTool::class,
@@ -296,7 +296,7 @@ class Server extends Component
     /**
      * Register MCP resources
      */
-    private function registerResources()
+    private function registerResources(): void
     {
         $this->resources['guidelines://core'] = new Resources\GuidelinesResource([
             'basePath' => $this->basePath,
@@ -312,7 +312,7 @@ class Server extends Component
      *
      * @throws Exception
      */
-    private function createTransport()
+    private function createTransport(): void
     {
         switch ($this->transport) {
             case 'stdio':
@@ -329,7 +329,7 @@ class Server extends Component
      *
      * @return array
      */
-    public function getTools()
+    public function getTools(): array
     {
         return $this->tools;
     }
@@ -339,7 +339,7 @@ class Server extends Component
      *
      * @return array
      */
-    public function getResources()
+    public function getResources(): array
     {
         return $this->resources;
     }

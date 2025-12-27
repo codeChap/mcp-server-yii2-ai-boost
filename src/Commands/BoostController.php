@@ -13,13 +13,24 @@ use yii\console\ExitCode;
  * the package is installed via Composer.
  *
  * Available commands:
- *   php yii boost/install
- *   php yii boost/mcp
- *   php yii boost/info
- *   php yii boost/update
+ *   php yii boost                (display info - default action)
+ *   php yii boost/install        (run installation wizard)
+ *   php yii boost/mcp            (start MCP server)
+ *   php yii boost/info           (display package information)
+ *   php yii boost/update         (update guidelines)
  */
 class BoostController extends Controller
 {
+    /**
+     * Display Yii2 AI Boost information (default action)
+     *
+     * @return int
+     */
+    public function actionIndex()
+    {
+        return $this->actionInfo();
+    }
+
     /**
      * Run boost install wizard
      *

@@ -46,6 +46,10 @@ class StdioTransport
      */
     public function listen(callable $handler)
     {
+        // Write a marker to stderr so we know the server started
+        fwrite(STDERR, "[MCP] Server ready\n");
+        fflush(STDERR);
+
         while (true) {
             // Read a line from STDIN
             $line = fgets($this->stdin);
@@ -72,7 +76,8 @@ class StdioTransport
                 }
             } catch (\Exception $e) {
                 // Write error to stderr for debugging
-                fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
+                fwrite(STDERR, "[MCP ERROR] " . $e->getMessage() . "\n");
+                fwrite(STDERR, $e->getTraceAsString() . "\n");
             }
         }
     }

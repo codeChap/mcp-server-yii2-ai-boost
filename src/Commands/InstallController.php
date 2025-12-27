@@ -126,12 +126,15 @@ class InstallController extends Controller
     {
         $basePath = Yii::getAlias('@app');
 
-        // Generate .mcp.json
+        // Generate .mcp.json with absolute paths for maximum compatibility with MCP clients
+        $phpPath = PHP_BINARY;
+        $yiiPath = $basePath . '/yii';
+
         $mcpConfig = [
             'mcpServers' => [
                 'yii2-boost' => [
-                    'command' => 'php',
-                    'args' => ['yii', 'boost/mcp'],
+                    'command' => $phpPath,
+                    'args' => [$yiiPath, 'boost/mcp'],
                     'cwd' => $basePath,
                 ],
             ],

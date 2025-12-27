@@ -24,6 +24,11 @@ class Server extends Component
     public $transport = 'stdio';
 
     /**
+     * @var resource Stream resource for logging (typically STDERR)
+     */
+    public $logStream;
+
+    /**
      * @var array Collection of registered tools
      */
     private $tools = [];
@@ -274,7 +279,9 @@ class Server extends Component
     {
         switch ($this->transport) {
             case 'stdio':
-                $this->transportInstance = new Transports\StdioTransport();
+                $this->transportInstance = new Transports\StdioTransport([
+                    'logStream' => $this->logStream,
+                ]);
                 break;
 
             default:

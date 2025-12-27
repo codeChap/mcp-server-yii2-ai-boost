@@ -34,8 +34,10 @@ class McpController extends Controller
             // Configure logging to stderr only to avoid interfering with STDOUT JSON-RPC
             $this->configureLogging();
 
-            // Print startup information
-            $this->printStartupInfo();
+            // Print startup information (optional - can be disabled for debugging)
+            if (getenv('YII2_BOOST_MCP_DEBUG') !== 'false') {
+                $this->printStartupInfo();
+            }
 
             // Create and start the MCP server
             $server = new Server([

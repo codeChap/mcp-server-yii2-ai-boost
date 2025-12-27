@@ -279,7 +279,8 @@ class Server extends Component
     {
         switch ($this->transport) {
             case 'stdio':
-                $this->transportInstance = new Transports\StdioTransport([
+                $this->transportInstance = \Yii::createObject([
+                    'class' => Transports\StdioTransport::class,
                     'logStream' => $this->logStream,
                 ]);
                 break;

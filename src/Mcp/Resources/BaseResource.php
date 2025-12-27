@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Resources;
 
 use yii\base\Component;
@@ -21,19 +23,19 @@ abstract class BaseResource extends Component
      *
      * @return string
      */
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * Get the resource description
      *
      * @return string
      */
-    abstract public function getDescription();
+    abstract public function getDescription(): string;
 
     /**
      * Read the resource content
      *
      * @return mixed Resource content
      */
-    abstract public function read();
+    abstract public function read(): mixed;
 }

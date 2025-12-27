@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Resources;
 
 use Yii;
@@ -11,17 +13,17 @@ use Yii;
  */
 class GuidelinesResource extends BaseResource
 {
-    public function getName()
+    public function getName(): string
     {
         return 'Framework and Application Guidelines';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Yii2 framework guidelines and best practices';
     }
 
-    public function read()
+    public function read(): mixed
     {
         $basePath = $this->basePath ?: Yii::getAlias('@app');
         $claudeFile = $basePath . '/CLAUDE.md';

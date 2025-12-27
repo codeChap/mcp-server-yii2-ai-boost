@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Commands;
 
 use Yii;
@@ -28,7 +30,7 @@ class McpController extends Controller
      *
      * @return int Exit code
      */
-    public function actionIndex()
+    public function actionIndex(): int
     {
         try {
             // Configure logging to stderr only to avoid interfering with STDOUT JSON-RPC
@@ -58,7 +60,7 @@ class McpController extends Controller
      * All application logs go to STDERR or a file, never to STDOUT.
      * This ensures STDOUT remains clean for JSON-RPC messages.
      */
-    private function configureLogging()
+    private function configureLogging(): void
     {
         // Suppress all logging during MCP server operation
         // Logging would interfere with JSON-RPC protocol on STDOUT

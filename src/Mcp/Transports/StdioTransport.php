@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Transports;
 
 /**
@@ -28,9 +30,9 @@ class StdioTransport
     /**
      * Constructor - initialize streams
      *
-     * @param string $basePath Application base path (for future use)
+     * @param string|null $basePath Application base path (for future use)
      */
-    public function __construct($basePath = null)
+    public function __construct(?string $basePath = null)
     {
         $this->stdin = fopen('php://stdin', 'r');
         $this->stdout = fopen('php://stdout', 'w');
@@ -44,7 +46,7 @@ class StdioTransport
      *
      * @param callable $handler Callback to handle requests: function($request) -> string
      */
-    public function listen(callable $handler)
+    public function listen(callable $handler): void
     {
         // Write a marker to stderr so we know the server started
         fwrite(STDERR, "[MCP] Server ready\n");
@@ -85,7 +87,7 @@ class StdioTransport
     /**
      * Destructor - close file handles
      */
-    public function __destruct()
+    public function __destruct(): void
     {
         if (is_resource($this->stdin)) {
             fclose($this->stdin);

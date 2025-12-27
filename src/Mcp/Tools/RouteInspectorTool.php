@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
@@ -17,17 +19,17 @@ use yii\web\UrlRule;
  */
 class RouteInspectorTool extends BaseTool
 {
-    public function getName()
+    public function getName(): string
     {
         return 'route_inspector';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Inspect application routes and URL rules including module routes and REST endpoints';
     }
 
-    public function getInputSchema()
+    public function getInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -44,7 +46,7 @@ class RouteInspectorTool extends BaseTool
         ];
     }
 
-    public function execute($arguments)
+    public function execute(array $arguments): mixed
     {
         $module = $arguments['module'] ?? null;
         $includePatterns = $arguments['include_patterns'] ?? false;
@@ -65,7 +67,7 @@ class RouteInspectorTool extends BaseTool
      * @param bool $includePatterns Include regex patterns
      * @return array
      */
-    private function getUrlRules($includePatterns = false)
+    private function getUrlRules(bool $includePatterns = false): array
     {
         $app = Yii::$app;
         if (!$app->has('urlManager')) {
@@ -111,7 +113,7 @@ class RouteInspectorTool extends BaseTool
      * @return array
      * @throws \Exception
      */
-    private function getModuleRoutes($moduleName = null, $includePatterns = false)
+    private function getModuleRoutes(?string $moduleName = null, bool $includePatterns = false): array
     {
         $app = Yii::$app;
         $result = [];
@@ -143,7 +145,7 @@ class RouteInspectorTool extends BaseTool
      * @param string $moduleId Module ID
      * @return array
      */
-    private function scanModuleControllers($module, $moduleId)
+    private function scanModuleControllers(object $module, string $moduleId): array
     {
         $controllersPath = $module->basePath . '/controllers';
         $routes = [];
@@ -186,7 +188,7 @@ class RouteInspectorTool extends BaseTool
      * @param string $string String to convert
      * @return string
      */
-    private function camelCaseToKebabCase($string)
+    private function camelCaseToKebabCase(string $string): string
     {
         return strtolower(preg_replace(
             '/([a-z0-9]|(?<=[a-z])[A-Z]|(?<=[A-Z])[A-Z](?=[a-z]))([A-Z])/s',

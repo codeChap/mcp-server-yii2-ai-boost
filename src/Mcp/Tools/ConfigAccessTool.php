@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
@@ -17,17 +19,17 @@ use Yii;
  */
 class ConfigAccessTool extends BaseTool
 {
-    public function getName()
+    public function getName(): string
     {
         return 'config_access';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Access application configuration including components, modules, and parameters (with sensitive data redaction)';
     }
 
-    public function getInputSchema()
+    public function getInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -49,7 +51,7 @@ class ConfigAccessTool extends BaseTool
         ];
     }
 
-    public function execute($arguments)
+    public function execute(array $arguments): mixed
     {
         $component = $arguments['component'] ?? null;
         $key = $arguments['key'] ?? null;
@@ -87,7 +89,7 @@ class ConfigAccessTool extends BaseTool
      *
      * @return array
      */
-    private function getComponentsConfig()
+    private function getComponentsConfig(): array
     {
         $app = Yii::$app;
         $components = [];
@@ -106,7 +108,7 @@ class ConfigAccessTool extends BaseTool
      * @return array
      * @throws \Exception
      */
-    private function getComponentConfig($id)
+    private function getComponentConfig(string $id): array
     {
         $app = Yii::$app;
 
@@ -129,7 +131,7 @@ class ConfigAccessTool extends BaseTool
      *
      * @return array
      */
-    private function getModulesConfig()
+    private function getModulesConfig(): array
     {
         $app = Yii::$app;
         $modules = [];
@@ -151,7 +153,7 @@ class ConfigAccessTool extends BaseTool
      *
      * @return array
      */
-    private function getParams()
+    private function getParams(): array
     {
         return $this->sanitize(Yii::$app->params);
     }

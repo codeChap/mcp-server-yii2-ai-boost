@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use yii\base\Component;
@@ -21,21 +23,21 @@ abstract class BaseTool extends Component
      *
      * @return string
      */
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * Get the tool description
      *
      * @return string
      */
-    abstract public function getDescription();
+    abstract public function getDescription(): string;
 
     /**
      * Get the tool input schema (JSON Schema)
      *
      * @return array
      */
-    abstract public function getInputSchema();
+    abstract public function getInputSchema(): array;
 
     /**
      * Execute the tool with given arguments
@@ -44,7 +46,7 @@ abstract class BaseTool extends Component
      * @return mixed Result data
      * @throws \Exception
      */
-    abstract public function execute($arguments);
+    abstract public function execute(array $arguments): mixed;
 
     /**
      * Sanitize output to remove sensitive data
@@ -52,7 +54,7 @@ abstract class BaseTool extends Component
      * @param mixed $data Data to sanitize
      * @return mixed Sanitized data
      */
-    protected function sanitize($data)
+    protected function sanitize(mixed $data): mixed
     {
         // List of sensitive keys to filter
         $sensitiveKeys = [
@@ -94,7 +96,7 @@ abstract class BaseTool extends Component
      *
      * @return array Array of database names and connection info
      */
-    protected function getDbConnections()
+    protected function getDbConnections(): array
     {
         $connections = [];
         $app = \Yii::$app;
@@ -133,7 +135,7 @@ abstract class BaseTool extends Component
      * @param string $dsn Database DSN
      * @return string Driver name
      */
-    protected function getDbDriver($dsn)
+    protected function getDbDriver(string $dsn): string
     {
         $driver = explode(':', $dsn)[0] ?? 'unknown';
         return $driver;

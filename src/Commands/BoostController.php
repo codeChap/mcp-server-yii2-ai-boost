@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Commands;
 
 use yii\console\Controller;
@@ -26,7 +28,7 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionIndex()
+    public function actionIndex(): int
     {
         return $this->actionInfo();
     }
@@ -36,7 +38,7 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionInstall()
+    public function actionInstall(): int
     {
         $controller = new InstallController('boost/install', \Yii::$app);
         return $controller->runAction('index');
@@ -47,7 +49,7 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionMcp()
+    public function actionMcp(): int
     {
         $controller = new McpController('boost/mcp', \Yii::$app);
         return $controller->runAction('index');
@@ -58,7 +60,7 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionInfo()
+    public function actionInfo(): int
     {
         $controller = new InfoController('boost/info', \Yii::$app);
         return $controller->runAction('index');
@@ -69,7 +71,7 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionUpdate()
+    public function actionUpdate(): int
     {
         $controller = new UpdateController('boost/update', \Yii::$app);
         return $controller->runAction('index');

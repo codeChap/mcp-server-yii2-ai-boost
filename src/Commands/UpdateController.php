@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Commands;
 
 use Yii;
@@ -21,7 +23,7 @@ class UpdateController extends Controller
      *
      * @return int Exit code
      */
-    public function actionIndex()
+    public function actionIndex(): int
     {
         $this->stdout("┌───────────────────────────────────────────┐\n", 32);
         $this->stdout("│   Yii2 AI Boost - Update                  │\n", 32);
@@ -52,7 +54,7 @@ class UpdateController extends Controller
      * This is a placeholder for now. In production, this would download
      * updated guidelines from a remote repository.
      */
-    private function updateGuidelines()
+    private function updateGuidelines(): void
     {
         $basePath = Yii::getAlias('@app');
         $guidelinesPath = $basePath . '/.ai/guidelines';
@@ -74,7 +76,7 @@ class UpdateController extends Controller
     /**
      * Verify installation
      */
-    private function verifyInstallation()
+    private function verifyInstallation(): void
     {
         $basePath = Yii::getAlias('@app');
 

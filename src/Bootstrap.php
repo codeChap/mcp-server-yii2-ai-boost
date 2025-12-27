@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost;
 
 use yii\base\BootstrapInterface;
@@ -24,7 +26,7 @@ class Bootstrap implements BootstrapInterface
      *
      * @param \yii\base\Application $app The application instance
      */
-    public function bootstrap($app)
+    public function bootstrap($app): void
     {
         // Only register commands in console applications
         if ($app instanceof ConsoleApplication) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
@@ -17,17 +19,17 @@ use Yii;
  */
 class DatabaseSchemaTool extends BaseTool
 {
-    public function getName()
+    public function getName(): string
     {
         return 'database_schema';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Inspect database schema including tables, columns, indexes, and Active Record models';
     }
 
-    public function getInputSchema()
+    public function getInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -49,7 +51,7 @@ class DatabaseSchemaTool extends BaseTool
         ];
     }
 
-    public function execute($arguments)
+    public function execute(array $arguments): mixed
     {
         $dbName = $arguments['db'] ?? 'db';
         $table = $arguments['table'] ?? null;
@@ -92,7 +94,7 @@ class DatabaseSchemaTool extends BaseTool
      * @param string|null $table Specific table
      * @return array
      */
-    private function getTables($db, $table = null)
+    private function getTables(object $db, ?string $table = null): array
     {
         $schema = $db->getSchema();
         $tables = [];
@@ -127,7 +129,7 @@ class DatabaseSchemaTool extends BaseTool
      * @param string $table Table name
      * @return array
      */
-    private function getTableSchema($db, $table)
+    private function getTableSchema(object $db, string $table): array
     {
         $schema = $db->getSchema();
         $tableSchema = $schema->getTableSchema($table);
@@ -181,7 +183,7 @@ class DatabaseSchemaTool extends BaseTool
      * @param string $table Table name
      * @return array
      */
-    private function getTableIndexes($db, $table)
+    private function getTableIndexes(object $db, string $table): array
     {
         $schema = $db->getSchema();
 
@@ -204,7 +206,7 @@ class DatabaseSchemaTool extends BaseTool
      *
      * @return array
      */
-    private function getActiveRecordModels()
+    private function getActiveRecordModels(): array
     {
         $modelsPath = Yii::getAlias('@app/models');
         if (!is_dir($modelsPath)) {
@@ -235,7 +237,7 @@ class DatabaseSchemaTool extends BaseTool
      * @param string $file File path
      * @return string|null
      */
-    private function getClassNameFromFile($file)
+    private function getClassNameFromFile(string $file): ?string
     {
         $namespace = '';
         $className = '';
@@ -274,7 +276,7 @@ class DatabaseSchemaTool extends BaseTool
      * @param string $className Class name
      * @return bool
      */
-    private function isActiveRecordModel($className)
+    private function isActiveRecordModel(string $className): bool
     {
         try {
             if (!class_exists($className)) {

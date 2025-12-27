@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Resources;
 
 use Yii;
@@ -11,17 +13,17 @@ use Yii;
  */
 class BoostConfigResource extends BaseResource
 {
-    public function getName()
+    public function getName(): string
     {
         return 'Yii2 AI Boost Configuration';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Current Yii2 AI Boost package configuration and status';
     }
 
-    public function read()
+    public function read(): mixed
     {
         $basePath = $this->basePath ?: Yii::getAlias('@app');
         $configFile = $basePath . '/boost.json';

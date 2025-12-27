@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Commands;
 
 use Yii;
@@ -22,7 +24,7 @@ class InstallController extends Controller
      *
      * @return int Exit code
      */
-    public function actionIndex()
+    public function actionIndex(): int
     {
         $this->stdout("┌───────────────────────────────────────────┐\n", 32);
         $this->stdout("│      Yii2 AI Boost Installation Wizard     │\n", 32);
@@ -65,7 +67,7 @@ class InstallController extends Controller
      *
      * @return array
      */
-    private function detectEnvironment()
+    private function detectEnvironment(): array
     {
         $app = Yii::$app;
 
@@ -84,7 +86,7 @@ class InstallController extends Controller
      *
      * @param array $envInfo Environment information
      */
-    private function outputEnvironmentInfo($envInfo)
+    private function outputEnvironmentInfo(array $envInfo): void
     {
         $this->stdout("  ✓ Yii2 version: {$envInfo['yii_version']}\n", 32);
         $this->stdout("  ✓ PHP version: {$envInfo['php_version']}\n", 32);
@@ -97,7 +99,7 @@ class InstallController extends Controller
      *
      * @throws \Exception
      */
-    private function createDirectories()
+    private function createDirectories(): void
     {
         $basePath = Yii::getAlias('@app');
 
@@ -122,7 +124,7 @@ class InstallController extends Controller
      * @param array $envInfo Environment information
      * @throws \Exception
      */
-    private function generateConfigFiles($envInfo)
+    private function generateConfigFiles(array $envInfo): void
     {
         $basePath = Yii::getAlias('@app');
 
@@ -197,7 +199,7 @@ class InstallController extends Controller
      * @param string $basePath Application base path
      * @param string $entry Entry to add
      */
-    private function addToGitignore($basePath, $entry)
+    private function addToGitignore(string $basePath, string $entry): void
     {
         $gitignore = $basePath . '/.gitignore';
 
@@ -217,7 +219,7 @@ class InstallController extends Controller
      * This is a placeholder for now. In production, this would download
      * guidelines from a remote repository.
      */
-    private function downloadGuidelines()
+    private function downloadGuidelines(): void
     {
         $basePath = Yii::getAlias('@app');
         $guidelinesPath = $basePath . '/.ai/guidelines/core';
@@ -237,7 +239,7 @@ class InstallController extends Controller
      *
      * @param array $envInfo Environment information
      */
-    private function outputSuccessMessage($envInfo)
+    private function outputSuccessMessage(array $envInfo): void
     {
         $this->stdout("\n", 0);
         $this->stdout("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", 32);

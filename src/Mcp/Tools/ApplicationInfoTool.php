@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
@@ -15,17 +17,17 @@ use Yii;
  */
 class ApplicationInfoTool extends BaseTool
 {
-    public function getName()
+    public function getName(): string
     {
         return 'application_info';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Get comprehensive information about the Yii2 application including version, environment, modules, and extensions';
     }
 
-    public function getInputSchema()
+    public function getInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -39,7 +41,7 @@ class ApplicationInfoTool extends BaseTool
         ];
     }
 
-    public function execute($arguments)
+    public function execute(array $arguments): mixed
     {
         $include = $arguments['include'] ?? ['version', 'environment', 'modules', 'extensions'];
 
@@ -69,7 +71,7 @@ class ApplicationInfoTool extends BaseTool
      *
      * @return array
      */
-    private function getVersionInfo()
+    private function getVersionInfo(): array
     {
         return [
             'yii2_version' => Yii::getVersion(),
@@ -83,7 +85,7 @@ class ApplicationInfoTool extends BaseTool
      *
      * @return array
      */
-    private function getEnvironmentInfo()
+    private function getEnvironmentInfo(): array
     {
         $result = [
             'yii_env' => YII_ENV,
@@ -107,7 +109,7 @@ class ApplicationInfoTool extends BaseTool
      *
      * @return array
      */
-    private function getModulesInfo()
+    private function getModulesInfo(): array
     {
         $modules = [];
         $app = Yii::$app;
@@ -127,7 +129,7 @@ class ApplicationInfoTool extends BaseTool
      *
      * @return array
      */
-    private function getExtensionsInfo()
+    private function getExtensionsInfo(): array
     {
         $extensions = [];
         $vendorDir = Yii::getAlias('@vendor');

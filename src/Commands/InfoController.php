@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Commands;
 
 use Yii;
@@ -21,7 +23,7 @@ class InfoController extends Controller
      *
      * @return int Exit code
      */
-    public function actionIndex()
+    public function actionIndex(): int
     {
         $this->stdout("╔════════════════════════════════════════╗\n", 36);
         $this->stdout("║    Yii2 AI Boost - Information         ║\n", 36);
@@ -43,7 +45,7 @@ class InfoController extends Controller
     /**
      * Display package information
      */
-    private function displayPackageInfo()
+    private function displayPackageInfo(): void
     {
         $this->stdout("Package Information\n", 33);
         $this->stdout("─────────────────────────────────────────\n", 33);
@@ -66,7 +68,7 @@ class InfoController extends Controller
     /**
      * Display configuration status
      */
-    private function displayConfigStatus()
+    private function displayConfigStatus(): void
     {
         $basePath = Yii::getAlias('@app');
 
@@ -95,7 +97,7 @@ class InfoController extends Controller
     /**
      * Display available tools
      */
-    private function displayTools()
+    private function displayTools(): void
     {
         $this->stdout("Available Tools\n", 33);
         $this->stdout("─────────────────────────────────────────\n", 33);
@@ -119,7 +121,7 @@ class InfoController extends Controller
     /**
      * Display guidelines status
      */
-    private function displayGuidelines()
+    private function displayGuidelines(): void
     {
         $basePath = Yii::getAlias('@app');
         $guidelinesPath = $basePath . '/.ai/guidelines';

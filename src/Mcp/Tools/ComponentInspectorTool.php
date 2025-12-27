@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
@@ -15,17 +17,17 @@ use Yii;
  */
 class ComponentInspectorTool extends BaseTool
 {
-    public function getName()
+    public function getName(): string
     {
         return 'component_inspector';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Inspect application components including their classes, configurations, and properties';
     }
 
-    public function getInputSchema()
+    public function getInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -42,7 +44,7 @@ class ComponentInspectorTool extends BaseTool
         ];
     }
 
-    public function execute($arguments)
+    public function execute(array $arguments): mixed
     {
         $component = $arguments['component'] ?? null;
         $includeConfig = isset($arguments['include_config']) ? $arguments['include_config'] : true;
@@ -60,7 +62,7 @@ class ComponentInspectorTool extends BaseTool
      * @param bool $includeConfig Include configuration details
      * @return array
      */
-    private function listComponents($includeConfig = true)
+    private function listComponents(bool $includeConfig = true): array
     {
         $app = Yii::$app;
         $components = [];
@@ -80,7 +82,7 @@ class ComponentInspectorTool extends BaseTool
      * @return array
      * @throws \Exception
      */
-    private function getComponentDetails($id, $includeConfig = true)
+    private function getComponentDetails(string $id, bool $includeConfig = true): array
     {
         $app = Yii::$app;
 
@@ -132,7 +134,7 @@ class ComponentInspectorTool extends BaseTool
      * @param object $component Component instance
      * @return array
      */
-    private function getComponentProperties($component)
+    private function getComponentProperties(object $component): array
     {
         $properties = [];
 

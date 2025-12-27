@@ -191,8 +191,8 @@ class Server extends Component
         return [
             'protocolVersion' => $protocolVersion,
             'capabilities' => [
-                'tools' => [],
-                'resources' => [],
+                'tools' => new \stdClass(),      // Empty object, not array
+                'resources' => new \stdClass(),  // Empty object, not array
             ],
             'serverInfo' => [
                 'name' => 'Yii2 AI Boost',

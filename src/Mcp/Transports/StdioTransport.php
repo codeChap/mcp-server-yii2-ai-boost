@@ -27,8 +27,10 @@ class StdioTransport
 
     /**
      * Constructor - initialize streams
+     *
+     * @param string $basePath Application base path (for future use)
      */
-    public function __construct()
+    public function __construct($basePath = null)
     {
         $this->stdin = fopen('php://stdin', 'r');
         $this->stdout = fopen('php://stdout', 'w');

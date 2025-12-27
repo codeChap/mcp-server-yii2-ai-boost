@@ -89,7 +89,18 @@ class Server extends Component
         try {
             $decoded = json_decode($request, true);
 
-            if (!isset($decoded['jsonrpc']) || $decoded['jsonrpc'] !== '2.0') {
+            // Allow requests without jsonrpc field for compatibility with newer MCP versions
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return json_encode([
+                    'jsonrpc' => '2.0',
+                    'error' => [
+                        'code' => -32700,
+                        'message' => 'Parse error',
+                    ],
+                ]);
+            }
+
+            if (!isset($decoded['method'])) {
                 return json_encode([
                     'jsonrpc' => '2.0',
                     'error' => [
@@ -100,21 +111,19 @@ class Server extends Component
                 ]);
             }
 
-            $method = $decoded['method'] ?? null;
+            $method = $decoded['method'];
             $params = $decoded['params'] ?? [];
             $id = $decoded['id'] ?? null;
 
             $result = $this->dispatch($method, $params);
 
-            if ($id !== null) {
-                return json_encode([
-                    'jsonrpc' => '2.0',
-                    'id' => $id,
-                    'result' => $result,
-                ]);
-            }
-
-            return '';
+            // Always return a response. Claude Code doesn't always send an id field,
+            // but still expects responses to all requests.
+            return json_encode([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => $result,
+            ]);
         } catch (\Exception $e) {
             $id = isset($decoded['id']) ? $decoded['id'] : null;
             return json_encode([
@@ -175,8 +184,12 @@ class Server extends Component
      */
     private function initialize($params)
     {
+        // Use the client's protocol version if provided, otherwise use our version
+        $clientProtocolVersion = $params['protocolVersion'] ?? null;
+        $protocolVersion = $clientProtocolVersion ?: '2024-11-05';
+
         return [
-            'protocolVersion' => '2024-11-05',
+            'protocolVersion' => $protocolVersion,
             'capabilities' => [
                 'tools' => [],
                 'resources' => [],
@@ -301,7 +314,7 @@ class Server extends Component
     {
         switch ($this->transport) {
             case 'stdio':
-                $this->transportInstance = new Transports\StdioTransport();
+                $this->transportInstance = new Transports\StdioTransport($this->basePath);
                 break;
 
             default:

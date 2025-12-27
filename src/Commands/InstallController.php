@@ -133,9 +133,10 @@ class InstallController extends Controller
         $mcpConfig = [
             'mcpServers' => [
                 'yii2-boost' => [
+                    'type' => 'stdio',
                     'command' => $phpPath,
                     'args' => [$yiiPath, 'boost/mcp'],
-                    'cwd' => $basePath,
+                    'env' => [],
                 ],
             ],
         ];

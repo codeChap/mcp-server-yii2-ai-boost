@@ -142,6 +142,9 @@ class Server extends Component
     private function dispatch($method, $params)
     {
         switch ($method) {
+            case 'initialize':
+                return $this->initialize($params);
+
             case 'tools/list':
                 return $this->listTools();
 
@@ -160,6 +163,29 @@ class Server extends Component
             default:
                 throw new Exception("Unknown method: $method");
         }
+    }
+
+    /**
+     * Initialize the MCP server connection
+     *
+     * Called by the client at the start of the connection.
+     *
+     * @param array $params Client initialization parameters
+     * @return array Server capabilities
+     */
+    private function initialize($params)
+    {
+        return [
+            'protocolVersion' => '2024-11-05',
+            'capabilities' => [
+                'tools' => [],
+                'resources' => [],
+            ],
+            'serverInfo' => [
+                'name' => 'Yii2 AI Boost',
+                'version' => '1.0.0',
+            ],
+        ];
     }
 
     /**

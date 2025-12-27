@@ -45,8 +45,9 @@ class McpController extends Controller
 
             return ExitCode::OK;
         } catch (\Exception $e) {
-            // Log error to stderr
+            // Log error to stderr for debugging
             fwrite(STDERR, "MCP Server Error: " . $e->getMessage() . "\n");
+            fwrite(STDERR, $e->getTraceAsString() . "\n");
             return ExitCode::UNSPECIFIED_ERROR;
         }
     }

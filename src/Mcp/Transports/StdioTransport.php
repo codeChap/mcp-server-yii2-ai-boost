@@ -69,7 +69,8 @@ class StdioTransport
                     fflush($this->stdout);
                 }
             } catch (\Exception $e) {
-                // Silently ignore errors to keep stdout clean
+                // Write error to stderr for debugging
+                fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
             }
         }
     }

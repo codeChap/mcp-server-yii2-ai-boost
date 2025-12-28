@@ -15,8 +15,7 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 - **6 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and more
 - **Framework Guidelines** - Comprehensive Yii2 best practices and patterns
-- **IDE Integration** - Auto-configures MCP server in Claude Code, VS Code, PhpStorm, and Cursor
-- **Ecosystem Support** - Guidelines for Gii, Debug module, RBAC, and REST APIs
+- **IDE Integration** - Auto-configures MCP server for Claude Code
 - **Interactive Installation** - Wizard-based setup with environment detection
 
 ## Installation
@@ -174,21 +173,15 @@ The Log Inspector is the most advanced tool, featuring a **multi-reader architec
 | **1** | **log_inspector** | ✓ Complete | File, database, and in-memory logs with filtering |
 | 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
 | 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
-| 2 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |
-| 2 | behavior_inspector | 🔲 Planned | Attached behaviors, methods, event handlers |
-| 2 | event_inspector | 🔲 Planned | Application events, listeners, handlers |
 | 2 | database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
-| 2 | asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
-| 2 | widget_inspector | 🔲 Planned | Available widgets, usage, properties |
-| 2 | security_audit | 🔲 Planned | Common security issues, CSRF, SQL injection risks |
-| 2 | code_search | 🔲 Planned | Search codebase by patterns, class names, functions |
-| 3 | fixture_inspector | 🔲 Future | Test fixtures, data generation, loading |
-| 3 | rest_generator | 🔲 Future | Help generate REST API controllers/endpoints |
-| 3 | performance_profiler | 🔲 Future | Query profiling, timing, bottleneck detection |
-| 3 | dependency_analyzer | 🔲 Future | Composer dependencies, versions, conflicts |
-| 3 | documentation_search | 🔲 Future | Search Yii2 official docs with context |
-| 3 | cache_inspector | 🔲 Future | Cache components, performance metrics |
-| 3 | environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
+| 3 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |
+| 3 | asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
+| 3 | widget_inspector | 🔲 Planned | Available widgets, usage, properties |
+| 3 | performance_profiler | 🔲 Planned | Query profiling, timing, bottleneck detection |
+| 4 | behavior_inspector | 🔲 Future | Attached behaviors, methods, event handlers |
+| 4 | event_inspector | 🔲 Future | Application events, listeners, handlers |
+| 4 | cache_inspector | 🔲 Future | Cache components, performance metrics |
+| 4 | environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
 
 ## MCP Protocol
 

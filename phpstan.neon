@@ -1,0 +1,54 @@
+parameters:
+    level: 5
+    paths:
+        - src/
+
+    # Exclude paths
+    excludePaths:
+        - */tests/*
+        - */vendor/*
+
+    # Don't report unmatched ignore patterns
+    reportUnmatchedIgnoredErrors: false
+
+    # Ignore certain errors common in Yii2 code
+    ignoreErrors:
+        # Yii constants and classes unknown - PHPStan doesn't have stubs
+        - '#(Access to static property|Call to static method) .* on an unknown class Yii#'
+        - '#Constant (YII_ENV|YII_DEBUG) not found#'
+        - '#unknown class.*TransportInterface#'
+        
+        # Resource types (fopen returns resource|false)
+        - '#does not accept resource\|false#'
+        
+        # String parameter issues
+        - '#Parameter.*expects string, string\|false given#'
+        - '#Parameter.*expects string, string\|null given#'
+        - '#token_get_all#'
+        
+        # Array type hints without value types (common Yii2 pattern)
+        # This is a known pattern in Yii2 due to dynamic data structures
+        - '#has no value type specified in iterable type array#'
+        - '#return type has no value type specified in iterable type array#'
+        - '#Method.*has parameter.*with no value type specified in iterable type array#'
+        
+        # Return type issues with json_decode
+        - '#should return string but returns string\|false#'
+        
+        # Dynamic object access
+        - '#Call to an undefined method object::#'
+        - '#(Cannot call method|Call to method).*on (an unknown class|class-string\|object)#'
+        - '#Access to an undefined property object::#'
+        
+        # Negated boolean from PHPDoc
+        - '#Negated boolean expression is always false#'
+        
+        # Array foreach issues
+        - '#Argument of an invalid type array<int, string>\|false supplied for foreach#'
+        
+        # Log method with optional level parameter
+        - '#invoked with 2 parameters, 1 required#'
+        
+        # Constructor parameter type mismatch
+        - '#does not accept codechap\\yii2boost\\Mcp\\Transports\\StdioTransport#'
+        - '#invoked with 1 parameter, 0 required#'

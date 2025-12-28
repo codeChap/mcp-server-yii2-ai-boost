@@ -57,7 +57,7 @@ class McpController extends Controller
 
             file_put_contents($logFile, date('Y-m-d H:i:s') . " - MCP Server Stopped\n", FILE_APPEND);
             return ExitCode::OK;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log error to stderr for debugging
             fwrite(STDERR, "MCP Server Error: " . $e->getMessage() . "\n");
             fwrite(STDERR, $e->getTraceAsString() . "\n");

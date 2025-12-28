@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace codechap\yii2boost\Mcp;
 
+use Yii;
 use yii\base\Component;
 use yii\base\Exception;
 
@@ -42,6 +43,11 @@ class Server extends Component
     private $transportInstance;
 
     /**
+     * @var string Log file path
+     */
+    private $logFile;
+
+    /**
      * Initialize the MCP server
      *
      * @throws Exception
@@ -49,6 +55,17 @@ class Server extends Component
     public function init(): void
     {
         parent::init();
+
+        // Initialize log file
+        $this->logFile = Yii::getAlias('@runtime/logs/mcp-requests.log');
+        $logDir = dirname($this->logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+
+        $this->log("=== MCP Server Initialization Started ===");
+        $this->log("Base path: {$this->basePath}");
+        $this->log("Transport: {$this->transport}");
 
         // Initialize all tools
         $this->registerTools();
@@ -58,6 +75,19 @@ class Server extends Component
 
         // Create transport instance
         $this->createTransport();
+
+        $this->log("=== MCP Server Initialization Complete ===");
+    }
+
+    /**
+     * Write log message
+     *
+     * @param string $message Message to log
+     */
+    private function log(string $message): void
+    {
+        $timestamp = date('Y-m-d H:i:s');
+        file_put_contents($this->logFile, "[$timestamp] $message\n", FILE_APPEND);
     }
 
     /**
@@ -88,15 +118,18 @@ class Server extends Component
      */
     public function handleRequest(string $request): string
     {
-        // Log request to file for debugging
-        $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
-        file_put_contents($logFile, date('Y-m-d H:i:s') . " - Request: " . substr($request, 0, 100) . (strlen($request) > 100 ? '...' : '') . "\n", FILE_APPEND);
+        // Initialize decoded to avoid undefined variable in catch block
+        $decoded = null;
+
+        $this->log("--- Incoming Request ---");
+        $this->log("Raw request: " . substr($request, 0, 300) . (strlen($request) > 300 ? '...' : ''));
 
         try {
             $decoded = json_decode($request, true);
 
             // Allow requests without jsonrpc field for compatibility with newer MCP versions
             if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->log("JSON Parse Error: " . json_last_error_msg(), "ERROR");
                 return json_encode([
                     'jsonrpc' => '2.0',
                     'error' => [
@@ -106,7 +139,10 @@ class Server extends Component
                 ]);
             }
 
+            $this->log("Decoded JSON: " . json_encode($decoded));
+
             if (!isset($decoded['method'])) {
+                $this->log("Invalid Request: Missing method field", "ERROR");
                 return json_encode([
                     'jsonrpc' => '2.0',
                     'error' => [
@@ -121,15 +157,21 @@ class Server extends Component
             $params = $decoded['params'] ?? [];
             $id = $decoded['id'] ?? null;
 
+            $this->log("Method: $method");
+            $this->log("Params: " . json_encode($params));
+            $this->log("ID: " . ($id ?? 'null'));
+
             // Check if this is a notification (no id field means it's a notification)
             $isNotification = !isset($decoded['id']);
 
             // Handle notifications - they don't expect a response
             if ($isNotification) {
+                $this->log("Processing as notification");
                 $this->handleNotification($method, $params);
                 return ''; // Notifications don't return a response
             }
 
+            $this->log("Dispatching method: $method");
             $result = $this->dispatch($method, $params);
 
             // Always return a response. Claude Code doesn't always send an id field,
@@ -140,21 +182,20 @@ class Server extends Component
                 'result' => $result,
             ]);
 
-            // Log response
-            $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
-            file_put_contents($logFile, "  Response: " . substr($response, 0, 100) . (strlen($response) > 100 ? '...' : '') . "\n", FILE_APPEND);
+            $this->log("--- Response ---");
+            $this->log("Response: " . substr($response, 0, 300) . (strlen($response) > 300 ? '...' : ''));
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $id = isset($decoded['id']) ? $decoded['id'] : null;
+
+            // Log exception
+            $this->log("Exception caught: " . $e->getMessage(), "ERROR");
+            $this->log($e->getTraceAsString(), "ERROR");
 
             // Log exception details to stderr for debugging
             fwrite(STDERR, "[MCP Exception] " . $e->getMessage() . "\n");
             fwrite(STDERR, $e->getTraceAsString() . "\n");
-
-            // Log to file as well
-            $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
-            file_put_contents($logFile, "  ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
 
             $response = json_encode([
                 'jsonrpc' => '2.0',
@@ -168,7 +209,7 @@ class Server extends Component
                 ],
             ]);
 
-            file_put_contents($logFile, "  Error Response: " . substr($response, 0, 100) . (strlen($response) > 100 ? '...' : '') . "\n", FILE_APPEND);
+            $this->log("Error Response: " . substr($response, 0, 300) . (strlen($response) > 300 ? '...' : ''), "ERROR");
 
             return $response;
         }
@@ -188,23 +229,24 @@ class Server extends Component
     private function handleNotification(string $method, array $params): void
     {
         // Log notification
-        $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
-        file_put_contents($logFile, "  Notification: $method\n", FILE_APPEND);
+        $this->log("Handling notification: $method");
+        $this->log("Notification params: " . json_encode($params));
 
         // Handle specific notifications
         switch ($method) {
             case 'notifications/initialized':
                 // Client has received our initialize response and is ready
-                // No action needed
+                $this->log("Client initialized and ready");
                 break;
 
             case 'notifications/progress':
                 // Client reporting progress - we can ignore for server-side tools
+                $this->log("Client progress notification");
                 break;
 
             default:
                 // Unknown notification - log but don't error
-                file_put_contents($logFile, "  Unknown notification: $method\n", FILE_APPEND);
+                $this->log("Unknown notification: $method");
                 break;
         }
     }
@@ -219,23 +261,31 @@ class Server extends Component
      */
     private function dispatch(string $method, array $params): mixed
     {
+        $this->log("Dispatch: $method");
+
         switch ($method) {
             case 'initialize':
+                $this->log("Calling initialize");
                 return $this->initialize($params);
 
             case 'tools/list':
+                $this->log("Calling listTools");
                 return $this->listTools();
 
             case 'tools/call':
                 $name = $params['name'] ?? null;
                 $arguments = $params['arguments'] ?? [];
+                $this->log("Calling tool: $name");
+                $this->log("Tool arguments: " . json_encode($arguments));
                 return $this->callTool($name, $arguments);
 
             case 'resources/list':
+                $this->log("Calling listResources");
                 return $this->listResources();
 
             case 'resources/read':
                 $uri = $params['uri'] ?? null;
+                $this->log("Reading resource: $uri");
                 return $this->readResource($uri);
 
             default:
@@ -255,7 +305,7 @@ class Server extends Component
     {
         // Use the client's protocol version if provided, otherwise use our version
         $clientProtocolVersion = $params['protocolVersion'] ?? null;
-        $protocolVersion = $clientProtocolVersion ?: '2024-11-05';
+        $protocolVersion = $clientProtocolVersion ?: '2025-11-25';
 
         return [
             'protocolVersion' => $protocolVersion,
@@ -277,8 +327,10 @@ class Server extends Component
      */
     private function listTools(): array
     {
+        $this->log("Listing " . count($this->tools) . " available tools");
         $tools = [];
         foreach ($this->tools as $name => $tool) {
+            $this->log("  - Tool: $name");
             $tools[] = [
                 'name' => $name,
                 'description' => $tool->getDescription(),
@@ -299,11 +351,26 @@ class Server extends Component
     private function callTool(string $name, array $arguments): mixed
     {
         if (!isset($this->tools[$name])) {
+            $this->log("Tool not found: $name", "ERROR");
             throw new Exception("Unknown tool: $name");
         }
 
+        $this->log("Executing tool: $name");
         $tool = $this->tools[$name];
-        return $tool->execute($arguments);
+        $result = $tool->execute($arguments);
+        $this->log("Tool execution complete: $name");
+
+        // Format result for MCP protocol
+        $text = is_string($result) ? $result : json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        return [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => $text,
+                ]
+            ]
+        ];
     }
 
     /**
@@ -313,8 +380,10 @@ class Server extends Component
      */
     private function listResources(): array
     {
+        $this->log("Listing " . count($this->resources) . " available resources");
         $resources = [];
         foreach ($this->resources as $uri => $resource) {
+            $this->log("  - Resource: $uri");
             $resources[] = [
                 'uri' => $uri,
                 'name' => $resource->getName(),
@@ -333,12 +402,47 @@ class Server extends Component
      */
     private function readResource(string $uri): mixed
     {
+        if (!$uri) {
+            $this->log("Resource URI is required", "ERROR");
+            throw new Exception("Resource URI is required");
+        }
+
         if (!isset($this->resources[$uri])) {
+            $this->log("Resource not found: $uri", "ERROR");
             throw new Exception("Unknown resource: $uri");
         }
 
+        $this->log("Reading resource: $uri");
         $resource = $this->resources[$uri];
-        return $resource->read();
+        $data = $resource->read();
+        $this->log("Resource read complete: $uri");
+
+        // Map internal type to MIME type
+        $mimeType = 'text/plain';
+        if (isset($data['type'])) {
+            switch ($data['type']) {
+                case 'json':
+                    $mimeType = 'application/json';
+                    break;
+                case 'markdown':
+                    $mimeType = 'text/markdown';
+                    break;
+                case 'text':
+                default:
+                    $mimeType = 'text/plain';
+                    break;
+            }
+        }
+
+        return [
+            'contents' => [
+                [
+                    'uri' => $uri,
+                    'mimeType' => $mimeType,
+                    'text' => $data['content'] ?? '',
+                ]
+            ]
+        ];
     }
 
     /**
@@ -346,6 +450,7 @@ class Server extends Component
      */
     private function registerTools(): void
     {
+        $this->log("Registering MCP tools");
         $toolClasses = [
             Tools\ApplicationInfoTool::class,
             Tools\DatabaseSchemaTool::class,
@@ -355,9 +460,15 @@ class Server extends Component
         ];
 
         foreach ($toolClasses as $class) {
-            $tool = new $class(['basePath' => $this->basePath]);
-            $this->tools[$tool->getName()] = $tool;
+            try {
+                $tool = new $class(['basePath' => $this->basePath]);
+                $this->tools[$tool->getName()] = $tool;
+                $this->log("  ✓ Registered tool: " . $tool->getName());
+            } catch (\Exception $e) {
+                $this->log("  ✗ Failed to register tool $class: " . $e->getMessage(), "ERROR");
+            }
         }
+        $this->log("Tool registration complete. Total: " . count($this->tools) . " tools");
     }
 
     /**
@@ -365,13 +476,27 @@ class Server extends Component
      */
     private function registerResources(): void
     {
-        $this->resources['guidelines://core'] = new Resources\GuidelinesResource([
-            'basePath' => $this->basePath,
-        ]);
+        $this->log("Registering MCP resources");
 
-        $this->resources['config://boost'] = new Resources\BoostConfigResource([
-            'basePath' => $this->basePath,
-        ]);
+        try {
+            $this->resources['guidelines://core'] = new Resources\GuidelinesResource([
+                'basePath' => $this->basePath,
+            ]);
+            $this->log("  ✓ Registered resource: guidelines://core");
+        } catch (\Exception $e) {
+            $this->log("  ✗ Failed to register guidelines resource: " . $e->getMessage(), "ERROR");
+        }
+
+        try {
+            $this->resources['config://boost'] = new Resources\BoostConfigResource([
+                'basePath' => $this->basePath,
+            ]);
+            $this->log("  ✓ Registered resource: config://boost");
+        } catch (\Exception $e) {
+            $this->log("  ✗ Failed to register config resource: " . $e->getMessage(), "ERROR");
+        }
+
+        $this->log("Resource registration complete. Total: " . count($this->resources) . " resources");
     }
 
     /**

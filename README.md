@@ -23,7 +23,7 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 ```bash
 cd /path/to/yii2/application
-composer require codechap/yii2-ai-boost --dev
+composer require codechap/yii2-ai-boost:dev-master --dev
 ```
 
 ### Step 2: Run Installation Wizard

@@ -110,6 +110,45 @@ Introspect application components:
 - Check singleton vs new instance behavior
 - Inspect component properties
 
+## Tools Roadmap
+
+### Phase 1: Core Tools (5/5 - Complete ✓)
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| application_info | ✓ Complete | Yii2 version, environment, modules, extensions |
+| database_schema | ✓ Complete | Tables, columns, indexes, models, foreign keys |
+| config_access | ✓ Complete | Component, module, and parameter configurations |
+| route_inspector | ✓ Complete | URL rules, routes, REST endpoints |
+| component_inspector | ✓ Complete | Component listing, classes, configurations |
+
+### Phase 2: Enhanced Tools (0/10 - In Development)
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
+| validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
+| migration_inspector | 🔲 Planned | List migrations, status, rollback history |
+| behavior_inspector | 🔲 Planned | Attached behaviors, methods, event handlers |
+| event_inspector | 🔲 Planned | Application events, listeners, handlers |
+| database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
+| asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
+| widget_inspector | 🔲 Planned | Available widgets, usage, properties |
+| security_audit | 🔲 Planned | Common security issues, CSRF, SQL injection risks |
+| code_search | 🔲 Planned | Search codebase by patterns, class names, functions |
+
+### Phase 3: Advanced Tools (Planned)
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| fixture_inspector | 🔲 Future | Test fixtures, data generation, loading |
+| rest_generator | 🔲 Future | Help generate REST API controllers/endpoints |
+| performance_profiler | 🔲 Future | Query profiling, timing, bottleneck detection |
+| dependency_analyzer | 🔲 Future | Composer dependencies, versions, conflicts |
+| documentation_search | 🔲 Future | Search Yii2 official docs with context |
+| cache_inspector | 🔲 Future | Cache components, performance metrics |
+| environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
+
 ## MCP Protocol
 
 Yii2 AI Boost implements the Model Context Protocol (MCP) v2025-11-25:
@@ -305,8 +344,6 @@ BSD 3-Clause License. See LICENSE file for details.
 ## Credits
 
 Inspired by [Laravel Boost](https://github.com/laravel/boost) for Laravel.
-
-Built for the [StackChap](https://github.com/codechap/stackchap) project.
 
 ---
 

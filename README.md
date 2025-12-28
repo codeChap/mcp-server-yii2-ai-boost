@@ -216,6 +216,17 @@ The package auto-generates `.mcp.json` for IDE integration:
 }
 ```
 
+## Troubleshooting
+
+If the MCP server is not working as expected, check the log files:
+
+- **Startup Log**: `@runtime/logs/mcp-startup.log` (Initialization status)
+- **Error Log**: `@runtime/logs/mcp-errors.log` (PHP errors and exceptions)
+- **Request Log**: `@runtime/logs/mcp-requests.log` (JSON-RPC traffic)
+- **Transport Log**: `sys_get_temp_dir() . '/mcp-server/mcp-transport.log'` (Low-level transport debug)
+
+Ensure that your PHP environment meets the requirements and that the `yii` command is executable.
+
 ## Development
 
 ### Project Structure
@@ -233,7 +244,7 @@ mcp-server-yii2-ai-boost/
 │   │   │   ├── ConfigAccessTool.php
 │   │   │   ├── RouteInspectorTool.php
 │   │   │   └── ComponentInspectorTool.php
-│   │   ├── Resources/             # MCP resources
+│   │   ├── Resources/
 │   │   │   ├── BaseResource.php
 │   │   │   ├── GuidelinesResource.php
 │   │   │   └── BoostConfigResource.php

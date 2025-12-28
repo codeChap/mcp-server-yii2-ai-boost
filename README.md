@@ -507,16 +507,6 @@ If the MCP server is not working as expected, check the log files:
 
 Ensure that your PHP environment meets the requirements and that the `yii` command is executable.
 
-### Testing with StackChap
-
-```bash
-cd /media/codechap/4TB/develop/stackchap
-composer require codechap/yii2-ai-boost:dev-main --dev
-php yii boost/install
-php yii boost/info
-php yii boost/mcp
-```
-
 ### Running Tests
 
 ```bash

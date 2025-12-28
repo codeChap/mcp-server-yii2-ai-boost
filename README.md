@@ -352,10 +352,6 @@ BSD 3-Clause License. See LICENSE file for details.
 - **Issues**: https://github.com/codechap/yii2-ai-boost/issues
 - **Documentation**: See `.ai/guidelines/` directory
 
-## Credits
-
-Inspired by [Laravel Boost](https://github.com/laravel/boost) for Laravel.
-
 ---
 
 **Yii2 AI Boost** - Making Yii2 development smarter with AI assistants.

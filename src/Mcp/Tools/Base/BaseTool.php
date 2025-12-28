@@ -119,8 +119,10 @@ abstract class BaseTool extends Component
 
         // Additional named connections
         foreach ($app->get('components', []) as $name => $config) {
-            if (is_array($config) && isset($config['class']) &&
-                (stripos($config['class'], 'yii\db\Connection') !== false)) {
+            if (
+                is_array($config) && isset($config['class']) &&
+                (stripos($config['class'], 'yii\db\Connection') !== false)
+            ) {
                 if ($name !== 'db') {
                     $db = $app->get($name);
                     $connections[$name] = [

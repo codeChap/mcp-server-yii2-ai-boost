@@ -39,7 +39,7 @@ class StdioTransport
     {
         $this->stdin = fopen('php://stdin', 'r');
         $this->stdout = fopen('php://stdout', 'w');
-        
+
         // Initialize log file
         $this->logFile = $this->getLogFile();
         $this->log("StdioTransport initialized");
@@ -129,7 +129,7 @@ class StdioTransport
                 // Log exception
                 $this->log("Handler exception: " . $e->getMessage(), "ERROR");
                 $this->log($e->getTraceAsString(), "ERROR");
-                
+
                 // Write error to stderr for debugging
                 fwrite(STDERR, "[MCP ERROR] Handler exception: " . $e->getMessage() . "\n");
                 fwrite(STDERR, $e->getTraceAsString() . "\n");
@@ -146,7 +146,7 @@ class StdioTransport
     public function __destruct()
     {
         $this->log("Closing file handles", "INFO");
-        
+
         if (is_resource($this->stdin)) {
             fclose($this->stdin);
         }

@@ -91,7 +91,7 @@ class McpController extends Controller
         ini_set('error_log', $errorLogFile);
 
         // Set custom error handler to also log to stderr
-        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             fwrite(STDERR, "[PHP Error] $errstr in $errfile:$errline\n");
             error_log("$errstr in $errfile:$errline");
             return true;

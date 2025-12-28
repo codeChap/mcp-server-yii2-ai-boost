@@ -457,6 +457,7 @@ class Server extends Component
             Tools\ConfigAccessTool::class,
             Tools\RouteInspectorTool::class,
             Tools\ComponentInspectorTool::class,
+            Tools\LogInspectorTool::class,
         ];
 
         foreach ($toolClasses as $class) {

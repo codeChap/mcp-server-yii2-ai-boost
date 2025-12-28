@@ -13,7 +13,7 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 ## Features
 
-- **15+ MCP Tools** - Database inspection, config access, route analysis, component introspection, and more
+- **6 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and more
 - **Framework Guidelines** - Comprehensive Yii2 best practices and patterns
 - **IDE Integration** - Auto-configures MCP server in Claude Code, VS Code, PhpStorm, and Cursor
 - **Ecosystem Support** - Guidelines for Gii, Debug module, RBAC, and REST APIs
@@ -115,6 +115,17 @@ Introspect application components:
 - Check singleton vs new instance behavior
 - Inspect component properties
 
+### 6. Log Inspector Tool
+Inspect application logs from all configured sources:
+- Read logs from FileTarget (text files)
+- Read logs from DbTarget (database table)
+- Access in-memory logs (current request)
+- Filter by log level (error, warning, info, trace, profile)
+- Filter by category with wildcard patterns
+- Search logs by keywords
+- Filter by time range
+- View stack traces (for in-memory logs)
+
 ## Tools Roadmap
 
 | Phase | Tool | Status | Description |
@@ -124,6 +135,7 @@ Introspect application components:
 | **1** | **config_access** | ✓ Complete | Component, module, and parameter configurations |
 | **1** | **route_inspector** | ✓ Complete | URL rules, routes, REST endpoints |
 | **1** | **component_inspector** | ✓ Complete | Component listing, classes, configurations |
+| **1** | **log_inspector** | ✓ Complete | File, database, and in-memory logs with filtering |
 | 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
 | 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
 | 2 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |

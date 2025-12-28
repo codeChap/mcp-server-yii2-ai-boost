@@ -112,42 +112,30 @@ Introspect application components:
 
 ## Tools Roadmap
 
-### Phase 1: Core Tools (5/5 - Complete ✓)
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| application_info | ✓ Complete | Yii2 version, environment, modules, extensions |
-| database_schema | ✓ Complete | Tables, columns, indexes, models, foreign keys |
-| config_access | ✓ Complete | Component, module, and parameter configurations |
-| route_inspector | ✓ Complete | URL rules, routes, REST endpoints |
-| component_inspector | ✓ Complete | Component listing, classes, configurations |
-
-### Phase 2: Enhanced Tools (0/10 - In Development)
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
-| validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
-| migration_inspector | 🔲 Planned | List migrations, status, rollback history |
-| behavior_inspector | 🔲 Planned | Attached behaviors, methods, event handlers |
-| event_inspector | 🔲 Planned | Application events, listeners, handlers |
-| database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
-| asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
-| widget_inspector | 🔲 Planned | Available widgets, usage, properties |
-| security_audit | 🔲 Planned | Common security issues, CSRF, SQL injection risks |
-| code_search | 🔲 Planned | Search codebase by patterns, class names, functions |
-
-### Phase 3: Advanced Tools (Planned)
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| fixture_inspector | 🔲 Future | Test fixtures, data generation, loading |
-| rest_generator | 🔲 Future | Help generate REST API controllers/endpoints |
-| performance_profiler | 🔲 Future | Query profiling, timing, bottleneck detection |
-| dependency_analyzer | 🔲 Future | Composer dependencies, versions, conflicts |
-| documentation_search | 🔲 Future | Search Yii2 official docs with context |
-| cache_inspector | 🔲 Future | Cache components, performance metrics |
-| environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
+| Phase | Tool | Status | Description |
+|:-----:|------|--------|-------------|
+| **1** | **application_info** | ✓ Complete | Yii2 version, environment, modules, extensions |
+| **1** | **database_schema** | ✓ Complete | Tables, columns, indexes, models, foreign keys |
+| **1** | **config_access** | ✓ Complete | Component, module, and parameter configurations |
+| **1** | **route_inspector** | ✓ Complete | URL rules, routes, REST endpoints |
+| **1** | **component_inspector** | ✓ Complete | Component listing, classes, configurations |
+| 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
+| 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
+| 2 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |
+| 2 | behavior_inspector | 🔲 Planned | Attached behaviors, methods, event handlers |
+| 2 | event_inspector | 🔲 Planned | Application events, listeners, handlers |
+| 2 | database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
+| 2 | asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
+| 2 | widget_inspector | 🔲 Planned | Available widgets, usage, properties |
+| 2 | security_audit | 🔲 Planned | Common security issues, CSRF, SQL injection risks |
+| 2 | code_search | 🔲 Planned | Search codebase by patterns, class names, functions |
+| 3 | fixture_inspector | 🔲 Future | Test fixtures, data generation, loading |
+| 3 | rest_generator | 🔲 Future | Help generate REST API controllers/endpoints |
+| 3 | performance_profiler | 🔲 Future | Query profiling, timing, bottleneck detection |
+| 3 | dependency_analyzer | 🔲 Future | Composer dependencies, versions, conflicts |
+| 3 | documentation_search | 🔲 Future | Search Yii2 official docs with context |
+| 3 | cache_inspector | 🔲 Future | Cache components, performance metrics |
+| 3 | environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
 
 ## MCP Protocol
 
@@ -265,42 +253,6 @@ If the MCP server is not working as expected, check the log files:
 - **Transport Log**: `sys_get_temp_dir() . '/mcp-server/mcp-transport.log'` (Low-level transport debug)
 
 Ensure that your PHP environment meets the requirements and that the `yii` command is executable.
-
-## Development
-
-### Project Structure
-
-```
-mcp-server-yii2-ai-boost/
-├── src/
-│   ├── Bootstrap.php              # Composer auto-bootstrap
-│   ├── Mcp/
-│   │   ├── Server.php             # MCP server implementation
-│   │   ├── Tools/                 # MCP tool implementations
-│   │   │   ├── BaseTool.php
-│   │   │   ├── ApplicationInfoTool.php
-│   │   │   ├── DatabaseSchemaTool.php
-│   │   │   ├── ConfigAccessTool.php
-│   │   │   ├── RouteInspectorTool.php
-│   │   │   └── ComponentInspectorTool.php
-│   │   ├── Resources/
-│   │   │   ├── BaseResource.php
-│   │   │   ├── GuidelinesResource.php
-│   │   │   └── BoostConfigResource.php
-│   │   └── Transports/
-│   │       └── StdioTransport.php
-│   └── Commands/
-│       ├── InstallController.php
-│       ├── McpController.php
-│       ├── InfoController.php
-│       └── UpdateController.php
-├── .ai/
-│   └── guidelines/
-│       └── core/
-│           └── yii2-2.0.45.md
-├── composer.json
-└── README.md
-```
 
 ### Testing with StackChap
 

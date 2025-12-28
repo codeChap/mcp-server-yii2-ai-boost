@@ -248,6 +248,22 @@ The package auto-generates `.mcp.json` for IDE integration:
 }
 ```
 
+For Zed create or open your settings file in .zed/settings.json
+
+```json
+{
+    "context_servers": {
+      "yii2-ai-boost": {
+        "enabled": true,
+        "command": "php",
+        "args" : [
+            "yii", "boost/mcp"
+        ]
+      }
+    }
+}
+```
+
 ## Troubleshooting
 
 If the MCP server is not working as expected, check the log files:

@@ -34,10 +34,6 @@ theme:
 plugins:
   - search:
       lang: en
-  - minify:
-      minify_html: true
-      minify_css: true
-      minify_js: true
 
 markdown_extensions:
   - admonition

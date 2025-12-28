@@ -57,6 +57,11 @@ class DatabaseSchemaTool extends BaseTool
         $table = $arguments['table'] ?? null;
         $include = $arguments['include'] ?? ['tables', 'schema'];
 
+        // Expand 'all' to include all available options
+        if (in_array('all', $include)) {
+            $include = ['tables', 'schema', 'indexes', 'models'];
+        }
+
         if (!Yii::$app->has($dbName)) {
             throw new \Exception("Database connection '$dbName' not found");
         }

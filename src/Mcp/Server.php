@@ -121,6 +121,15 @@ class Server extends Component
             $params = $decoded['params'] ?? [];
             $id = $decoded['id'] ?? null;
 
+            // Check if this is a notification (no id field means it's a notification)
+            $isNotification = !isset($decoded['id']);
+
+            // Handle notifications - they don't expect a response
+            if ($isNotification) {
+                $this->handleNotification($method, $params);
+                return ''; // Notifications don't return a response
+            }
+
             $result = $this->dispatch($method, $params);
 
             // Always return a response. Claude Code doesn't always send an id field,
@@ -162,6 +171,41 @@ class Server extends Component
             file_put_contents($logFile, "  Error Response: " . substr($response, 0, 100) . (strlen($response) > 100 ? '...' : '') . "\n", FILE_APPEND);
 
             return $response;
+        }
+    }
+
+    /**
+     * Handle MCP notifications (requests without an id field)
+     *
+     * Notifications are one-way messages that don't expect a response.
+     * Common notifications:
+     * - notifications/initialized: Client signals it received initialize response
+     * - notifications/progress: Client reports progress on operations
+     *
+     * @param string $method Notification method name
+     * @param array $params Notification parameters
+     */
+    private function handleNotification(string $method, array $params): void
+    {
+        // Log notification
+        $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
+        file_put_contents($logFile, "  Notification: $method\n", FILE_APPEND);
+
+        // Handle specific notifications
+        switch ($method) {
+            case 'notifications/initialized':
+                // Client has received our initialize response and is ready
+                // No action needed
+                break;
+
+            case 'notifications/progress':
+                // Client reporting progress - we can ignore for server-side tools
+                break;
+
+            default:
+                // Unknown notification - log but don't error
+                file_put_contents($logFile, "  Unknown notification: $method\n", FILE_APPEND);
+                break;
         }
     }
 

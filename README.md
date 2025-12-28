@@ -68,7 +68,7 @@ Displays:
 php yii boost/mcp
 ```
 
-**Note**: This command is typically invoked automatically by IDEs. You don't need to run it manually.
+> ⚠️ **Note**: This command is typically invoked automatically by IDEs. You don't need to run it manually.
 
 The server listens on STDIN for JSON-RPC requests and outputs responses to STDOUT.
 

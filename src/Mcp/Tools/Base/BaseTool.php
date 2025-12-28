@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace codechap\yii2boost\Mcp\Tools;
+namespace codechap\yii2boost\Mcp\Tools\Base;
 
 use yii\base\Component;
 

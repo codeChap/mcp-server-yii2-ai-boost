@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
 
 /**
- * Configuration Access Tool
+ * Config Access Tool
  *
  * Provides safe access to application configuration including:
  * - Component configurations

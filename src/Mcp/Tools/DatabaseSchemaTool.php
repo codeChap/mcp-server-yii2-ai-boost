@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
+use yii\db\TableSchema;
+use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
 
 /**
- * Database Schema Inspection Tool
+ * Database Schema Tool
  *
  * Provides complete database introspection including:
  * - Database connections

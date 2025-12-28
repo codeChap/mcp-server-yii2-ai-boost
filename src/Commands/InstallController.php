@@ -27,7 +27,7 @@ class InstallController extends Controller
     public function actionIndex(): int
     {
         $this->stdout("┌───────────────────────────────────────────┐\n", 32);
-        $this->stdout("│      Yii2 AI Boost Installation Wizard     │\n", 32);
+        $this->stdout("│      Yii2 AI Boost Installation Wizard    │\n", 32);
         $this->stdout("└───────────────────────────────────────────┘\n\n", 32);
 
         try {

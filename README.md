@@ -3,7 +3,7 @@
 > **⚠️ Status: Active Development**
 >
 > This project is currently in **Phase 2** of development. Core tools are stable, but APIs and features may evolve. 
-> We welcome feedback and contributions!
+> ! welcome feedback and contributions!
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
@@ -16,7 +16,6 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 - **6 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and more
 - **Framework Guidelines** - Comprehensive Yii2 best practices and patterns
 - **IDE Integration** - Auto-configures MCP server for Claude Code
-- **Interactive Installation** - Wizard-based setup with environment detection
 
 ## Installation
 

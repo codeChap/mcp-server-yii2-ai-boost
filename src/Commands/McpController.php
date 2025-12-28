@@ -67,6 +67,16 @@ class McpController extends Controller
         error_reporting(E_ALL);
         ini_set('display_errors', '0');
         ini_set('log_errors', '1');
-        ini_set('error_log', Yii::getAlias('@runtime/logs/mcp-errors.log'));
+
+        // Log errors both to file and stderr for better debugging
+        $errorLogFile = Yii::getAlias('@runtime/logs/mcp-errors.log');
+        ini_set('error_log', $errorLogFile);
+
+        // Set custom error handler to also log to stderr
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            fwrite(STDERR, "[PHP Error] $errstr in $errfile:$errline\n");
+            error_log("$errstr in $errfile:$errline");
+            return true;
+        });
     }
 }

@@ -67,8 +67,22 @@ class ComponentInspectorTool extends BaseTool
         $app = Yii::$app;
         $components = [];
 
-        foreach ($app->getComponents() as $id => $component) {
-            $components[$id] = $this->getComponentDetails($id, $includeConfig);
+        try {
+            foreach ($app->getComponents() as $id => $component) {
+                try {
+                    $components[$id] = $this->getComponentDetails($id, $includeConfig);
+                } catch (\Exception $e) {
+                    // Log error but continue processing other components
+                    fwrite(STDERR, "[ComponentInspector] Error getting details for component '$id': " . $e->getMessage() . "\n");
+                    $components[$id] = [
+                        'id' => $id,
+                        'error' => $e->getMessage(),
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            fwrite(STDERR, "[ComponentInspector] Error listing components: " . $e->getMessage() . "\n");
+            throw $e;
         }
 
         return ['components' => $components];

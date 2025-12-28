@@ -128,6 +128,11 @@ class Server extends Component
             ]);
         } catch (\Exception $e) {
             $id = isset($decoded['id']) ? $decoded['id'] : null;
+
+            // Log exception details to stderr for debugging
+            fwrite(STDERR, "[MCP Exception] " . $e->getMessage() . "\n");
+            fwrite(STDERR, $e->getTraceAsString() . "\n");
+
             return json_encode([
                 'jsonrpc' => '2.0',
                 'id' => $id,

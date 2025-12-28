@@ -87,7 +87,7 @@ class StdioTransport
     /**
      * Destructor - close file handles
      */
-    public function __destruct(): void
+    public function __destruct()
     {
         if (is_resource($this->stdin)) {
             fclose($this->stdin);

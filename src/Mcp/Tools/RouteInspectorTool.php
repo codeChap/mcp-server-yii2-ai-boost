@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace codechap\yii2boost\Mcp\Tools;
 
 use Yii;
+use yii\web\UrlRule;
 use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
 
 /**

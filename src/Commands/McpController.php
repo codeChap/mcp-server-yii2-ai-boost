@@ -32,6 +32,10 @@ class McpController extends Controller
      */
     public function actionIndex(): int
     {
+        // Configure logging FIRST to prevent any output buffering issues
+        // This must be done before any file operations
+        $this->configureLogging();
+
         try {
             // Log startup event to file for debugging
             $logFile = Yii::getAlias('@runtime/logs/mcp-startup.log');
@@ -40,9 +44,6 @@ class McpController extends Controller
             file_put_contents($logFile, "  Working Directory: " . getcwd() . "\n", FILE_APPEND);
             file_put_contents($logFile, "  PHP SAPI: " . php_sapi_name() . "\n", FILE_APPEND);
             file_put_contents($logFile, "  Environment: YII_ENV=" . YII_ENV . ", YII_DEBUG=" . (YII_DEBUG ? 'true' : 'false') . "\n", FILE_APPEND);
-
-            // Configure logging to stderr only to avoid interfering with STDOUT JSON-RPC
-            $this->configureLogging();
 
             // Create and start the MCP server
             $server = new Server([
@@ -78,6 +79,12 @@ class McpController extends Controller
         error_reporting(E_ALL);
         ini_set('display_errors', '0');
         ini_set('log_errors', '1');
+
+        // Clear any output buffers that may have been started before this script
+        // This prevents buffered content from interfering with JSON-RPC responses
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
 
         // Log errors both to file and stderr for better debugging
         $errorLogFile = Yii::getAlias('@runtime/logs/mcp-errors.log');

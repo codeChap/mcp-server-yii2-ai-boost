@@ -3,7 +3,7 @@
     "description": "MCP Server for Yii2 applications - provides AI context and development tools via Model Context Protocol",
     "keywords": ["yii2", "mcp", "ai", "assistant", "tools", "guidelines", "claude"],
     "type": "yii2-extension",
-    "license": "MIT",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "CodeChap",

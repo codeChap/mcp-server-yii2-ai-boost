@@ -1,7 +1,7 @@
 # Yii2 AI Boost - MCP Server for Yii2 Applications
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 ![Yii2](https://img.shields.io/badge/Yii2-2.0.45-orange)
 
 Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistants (like Claude) with comprehensive tools and guidelines for Yii2 application development.
@@ -295,7 +295,7 @@ composer analyze           # Run static analysis (PHPStan level 8)
 
 ## License
 
-MIT License. See LICENSE file for details.
+BSD 3-Clause License. See LICENSE file for details.
 
 ## Support
 

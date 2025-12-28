@@ -105,7 +105,7 @@ class ComponentInspectorTool extends BaseTool
         }
 
         // Get the component definition (config)
-        $componentDef = $app->getComponent($id, false);
+        $componentDef = $app->components[$id] ?? [];
 
         // Get the loaded instance (if available)
         $component = null;
@@ -120,14 +120,6 @@ class ComponentInspectorTool extends BaseTool
             'class' => $component ? get_class($component) : (is_array($componentDef) ? $componentDef['class'] ?? 'unknown' : 'unknown'),
             'is_loaded' => $component !== null,
         ];
-
-        // Check if it's a singleton
-        try {
-            $isSingleton = $app->getSingleton($id) ? true : false;
-            $details['is_singleton'] = $isSingleton;
-        } catch (\Exception $e) {
-            $details['is_singleton'] = false;
-        }
 
         // Add configuration if requested
         if ($includeConfig && is_array($componentDef)) {

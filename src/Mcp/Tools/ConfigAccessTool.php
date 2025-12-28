@@ -116,13 +116,26 @@ class ConfigAccessTool extends BaseTool
             throw new \Exception("Component '$id' not found");
         }
 
-        $component = $app->get($id);
+        // Get component config from the components property
+        $componentDef = $app->components[$id] ?? [];
+
+        $componentClass = 'unknown';
+        try {
+            // Try to load the component and get its class
+            $component = $app->get($id);
+            $componentClass = get_class($component);
+        } catch (\Exception $e) {
+            // Component couldn't be loaded (e.g., web components in console context)
+            // Fall back to getting class from config
+            if (is_array($componentDef) && isset($componentDef['class'])) {
+                $componentClass = $componentDef['class'];
+            }
+        }
 
         return [
             'id' => $id,
-            'class' => get_class($component),
-            'config' => $this->sanitize($app->getComponent($id, false)),
-            'is_singleton' => $app->getSingleton($id) ? true : false,
+            'class' => $componentClass,
+            'config' => $this->sanitize($componentDef),
         ];
     }
 

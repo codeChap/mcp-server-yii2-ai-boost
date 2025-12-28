@@ -65,20 +65,26 @@ abstract class BaseTool extends Component
         if (is_array($data)) {
             $sanitized = [];
             foreach ($data as $key => $value) {
-                $lowerKey = strtolower($key);
+                // Only check string keys for sensitive patterns
+                if (is_string($key)) {
+                    $lowerKey = strtolower($key);
 
-                // Check if key contains sensitive pattern
-                $isSensitive = false;
-                foreach ($sensitiveKeys as $pattern) {
-                    if (stripos($lowerKey, $pattern) !== false) {
-                        $isSensitive = true;
-                        break;
+                    // Check if key contains sensitive pattern
+                    $isSensitive = false;
+                    foreach ($sensitiveKeys as $pattern) {
+                        if (stripos($lowerKey, $pattern) !== false) {
+                            $isSensitive = true;
+                            break;
+                        }
                     }
-                }
 
-                if ($isSensitive) {
-                    $sanitized[$key] = '***REDACTED***';
+                    if ($isSensitive) {
+                        $sanitized[$key] = '***REDACTED***';
+                    } else {
+                        $sanitized[$key] = $this->sanitize($value);
+                    }
                 } else {
+                    // Non-string keys (integers, etc) are always safe
                     $sanitized[$key] = $this->sanitize($value);
                 }
             }

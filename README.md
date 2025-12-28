@@ -126,6 +126,226 @@ Inspect application logs from all configured sources:
 - Filter by time range
 - View stack traces (for in-memory logs)
 
+## Core Tools Architecture
+
+All 6 core tools provide deep introspection into your Yii2 application. They follow a consistent architecture based on the **BaseTool** abstract class, which provides:
+
+- **Automatic Sanitization**: Sensitive data (passwords, tokens, keys) is automatically redacted from all tool outputs
+- **Database Discovery**: Tools automatically detect and access configured database connections
+- **JSON Schema Validation**: Input parameters are validated against defined schemas
+- **Error Handling**: Graceful error responses without exposing sensitive details
+
+### Tool Usage Pattern
+
+Each tool follows this general pattern:
+
+```
+Tool Call → Input Validation → Business Logic → Data Collection → Sanitization → JSON Response
+```
+
+The tools are stateless and can be called multiple times with different parameters. Results are deterministic based on input parameters.
+
+### How the Log Inspector Works
+
+The Log Inspector is the most advanced tool, featuring a **multi-reader architecture** that handles different log storage methods transparently:
+
+#### Three Reader Types
+
+**1. InMemoryLogReader**
+- **Source**: Current request logs in `Yii::getLogger()->messages`
+- **Usage**: Real-time debugging, fastest access
+- **Features**: Full stack traces, microsecond precision timestamps
+- **Limitations**: Only current request, cleared on shutdown
+- **Best For**: Immediate diagnostics during development
+
+**2. FileLogReader**
+- **Source**: FileTarget text logs (default: `@runtime/logs/app.log`)
+- **Usage**: Historical logs on disk
+- **Features**: Handles large files efficiently (tails 5MB+ files), auto-detects file rotation
+- **Limitations**: No indexed search, text parsing required
+- **Best For**: Reviewing logs from previous requests/sessions
+
+**3. DbLogReader**
+- **Source**: DbTarget database table (default: `{{%log}}`)
+- **Usage**: Persistent, queryable logs
+- **Features**: Fast indexed queries, precise time-range filtering, optimal for large volumes
+- **Limitations**: Requires database table setup
+- **Best For**: Production logging, log aggregation, performance analysis
+
+#### Unified Interface
+
+You request logs with a single `log_inspector` tool call:
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "log_inspector",
+    "arguments": {
+      "target": "all",
+      "levels": ["error", "warning"],
+      "categories": ["yii\\db\\*"],
+      "limit": 100
+    }
+  }
+}
+```
+
+The tool automatically:
+1. Discovers which readers are available
+2. Queries each reader in parallel
+3. Merges results across sources
+4. Sorts by timestamp (newest first)
+5. Applies pagination
+6. Returns aggregated summary with statistics
+
+#### Log Filter Parameters
+
+| Parameter | Type | Examples | Notes |
+|-----------|------|----------|-------|
+| `target` | string | `all`, `file`, `db`, `memory` | Which source to query (default: all) |
+| `levels` | array | `["error", "warning"]` | Log levels to include (default: error, warning) |
+| `categories` | array | `["yii\db\*", "application"]` | Category patterns with wildcard support |
+| `search` | string | `"connection"` | Case-insensitive keyword search in messages |
+| `time_range` | object | `{"start": 1703000000, "end": 1703086400}` | Unix timestamp range |
+| `limit` | integer | `100` (max: 1000) | Results per request (default: 100) |
+| `offset` | integer | `0` | Pagination offset |
+| `include_trace` | boolean | `true` | Include stack traces (in-memory only) |
+
+#### Response Structure
+
+Every log entry is normalized to this structure:
+
+```json
+{
+  "level": "error",
+  "level_code": 1,
+  "timestamp": 1703000000.123,
+  "timestamp_formatted": "2023-12-19 14:00:00",
+  "category": "yii\\db\\Connection",
+  "message": "Connection failed",
+  "message_type": "string",
+  "source": "file",
+  "prefix": "request-id-123",
+  "memory_usage": 2097152,
+  "trace": [
+    {
+      "file": "/app/models/User.php",
+      "line": 42,
+      "function": "save",
+      "class": "app\\models\\User"
+    }
+  ]
+}
+```
+
+Plus an aggregated summary:
+
+```json
+{
+  "summary": {
+    "total_available": 1024,
+    "returned": 50,
+    "sources": {
+      "file": 512,
+      "db": 512,
+      "memory": 0
+    },
+    "levels_found": ["error", "warning"],
+    "time_range": {
+      "earliest": 1703000000,
+      "latest": 1703086400
+    }
+  },
+  "targets_queried": ["file", "db"],
+  "warnings": []
+}
+```
+
+#### Common Use Cases
+
+**Debugging Recent Errors**
+```json
+{
+  "target": "all",
+  "levels": ["error", "warning"],
+  "limit": 50
+}
+```
+
+**Database Query Issues**
+```json
+{
+  "categories": ["yii\\db\\*"],
+  "levels": ["error", "warning"],
+  "limit": 100
+}
+```
+
+**Keyword Search**
+```json
+{
+  "search": "timeout",
+  "levels": ["error", "warning"],
+  "limit": 200
+}
+```
+
+**Time Range Analysis**
+```json
+{
+  "time_range": {
+    "start": 1703000000,
+    "end": 1703086400
+  },
+  "levels": ["error"],
+  "limit": 500
+}
+```
+
+**Custom Category Filtering**
+```json
+{
+  "categories": ["app\\models\\*", "app\\controllers\\*"],
+  "levels": ["error", "warning", "info"],
+  "limit": 100
+}
+```
+
+#### Performance Considerations
+
+- **In-Memory**: Instant, no I/O cost
+- **FileTarget**: Fast for <100MB files, uses tail for larger files
+- **DbTarget**: Requires indexes on `level`, `category`, `log_time` columns for optimal performance
+- **Pagination**: Always use `limit` parameter to prevent huge responses
+- **Time Range**: Filters early to minimize data transfer
+
+#### Setting Up DbTarget Logging
+
+To enable database logging, configure in your Yii2 app:
+
+```php
+// config/web.php or console.php
+'components' => [
+    'log' => [
+        'targets' => [
+            'db' => [
+                'class' => 'yii\log\DbTarget',
+                'levels' => ['error', 'warning'],
+                'logTable' => '{{%log}}',  // Table must exist
+                'db' => 'db',              // Database connection
+            ],
+        ],
+    ],
+],
+```
+
+Run migration to create the log table:
+
+```bash
+php yii migrate --migrationPath=@yii/log/migrations
+```
+
 ## Tools Roadmap
 
 | Phase | Tool | Status | Description |

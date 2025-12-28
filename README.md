@@ -135,16 +135,6 @@ All 6 core tools provide deep introspection into your Yii2 application. They fol
 - **JSON Schema Validation**: Input parameters are validated against defined schemas
 - **Error Handling**: Graceful error responses without exposing sensitive details
 
-### Tool Usage Pattern
-
-Each tool follows this general pattern:
-
-```
-Tool Call → Input Validation → Business Logic → Data Collection → Sanitization → JSON Response
-```
-
-The tools are stateless and can be called multiple times with different parameters. Results are deterministic based on input parameters.
-
 ### How the Log Inspector Works
 
 The Log Inspector is the most advanced tool, featuring a **multi-reader architecture** that handles different log storage methods transparently:

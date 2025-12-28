@@ -33,6 +33,14 @@ class McpController extends Controller
     public function actionIndex(): int
     {
         try {
+            // Log startup event to file for debugging
+            $logFile = Yii::getAlias('@runtime/logs/mcp-startup.log');
+            @mkdir(dirname($logFile), 0755, true);
+            file_put_contents($logFile, date('Y-m-d H:i:s') . " - MCP Server Starting\n", FILE_APPEND);
+            file_put_contents($logFile, "  Working Directory: " . getcwd() . "\n", FILE_APPEND);
+            file_put_contents($logFile, "  PHP SAPI: " . php_sapi_name() . "\n", FILE_APPEND);
+            file_put_contents($logFile, "  Environment: YII_ENV=" . YII_ENV . ", YII_DEBUG=" . (YII_DEBUG ? 'true' : 'false') . "\n", FILE_APPEND);
+
             // Configure logging to stderr only to avoid interfering with STDOUT JSON-RPC
             $this->configureLogging();
 
@@ -42,9 +50,12 @@ class McpController extends Controller
                 'transport' => 'stdio',
             ]);
 
+            file_put_contents($logFile, "  Server initialized, starting listen loop\n", FILE_APPEND);
+
             // Start the server (infinite loop until client disconnects)
             $server->start();
 
+            file_put_contents($logFile, date('Y-m-d H:i:s') . " - MCP Server Stopped\n", FILE_APPEND);
             return ExitCode::OK;
         } catch (\Exception $e) {
             // Log error to stderr for debugging

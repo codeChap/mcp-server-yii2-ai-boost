@@ -88,6 +88,10 @@ class Server extends Component
      */
     public function handleRequest(string $request): string
     {
+        // Log request to file for debugging
+        $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
+        file_put_contents($logFile, date('Y-m-d H:i:s') . " - Request: " . substr($request, 0, 100) . (strlen($request) > 100 ? '...' : '') . "\n", FILE_APPEND);
+
         try {
             $decoded = json_decode($request, true);
 
@@ -121,11 +125,17 @@ class Server extends Component
 
             // Always return a response. Claude Code doesn't always send an id field,
             // but still expects responses to all requests.
-            return json_encode([
+            $response = json_encode([
                 'jsonrpc' => '2.0',
                 'id' => $id,
                 'result' => $result,
             ]);
+
+            // Log response
+            $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
+            file_put_contents($logFile, "  Response: " . substr($response, 0, 100) . (strlen($response) > 100 ? '...' : '') . "\n", FILE_APPEND);
+
+            return $response;
         } catch (\Exception $e) {
             $id = isset($decoded['id']) ? $decoded['id'] : null;
 
@@ -133,7 +143,11 @@ class Server extends Component
             fwrite(STDERR, "[MCP Exception] " . $e->getMessage() . "\n");
             fwrite(STDERR, $e->getTraceAsString() . "\n");
 
-            return json_encode([
+            // Log to file as well
+            $logFile = \Yii::getAlias('@runtime/logs/mcp-requests.log');
+            file_put_contents($logFile, "  ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+
+            $response = json_encode([
                 'jsonrpc' => '2.0',
                 'id' => $id,
                 'error' => [
@@ -144,6 +158,10 @@ class Server extends Component
                     ],
                 ],
             ]);
+
+            file_put_contents($logFile, "  Error Response: " . substr($response, 0, 100) . (strlen($response) > 100 ? '...' : '') . "\n", FILE_APPEND);
+
+            return $response;
         }
     }
 

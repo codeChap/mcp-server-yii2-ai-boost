@@ -173,20 +173,6 @@ class InstallController extends Controller
         );
         $this->stdout("  ✓ Generated boost.json\n", 32);
 
-        // Generate CLAUDE.md
-        $claudeMd = "# Application Guidelines - Yii2 AI Boost\n\n";
-        $claudeMd .= "This application is configured with Yii2 AI Boost (MCP Server).\n\n";
-        $claudeMd .= "**Yii2 Version**: {$envInfo['yii_version']}\n";
-        $claudeMd .= "**Environment**: {$envInfo['yii_env']}\n";
-        $claudeMd .= "**Debug Mode**: " . ($envInfo['yii_debug'] ? 'ON' : 'OFF') . "\n\n";
-        $claudeMd .= "## Framework Guidelines\n\n";
-        $claudeMd .= "@include .ai/guidelines/core/yii2-2.0.45.md\n\n";
-        $claudeMd .= "## Ecosystem Guidelines\n\n";
-        $claudeMd .= "See `.ai/guidelines/ecosystem/` directory for additional guidelines.\n";
-
-        file_put_contents($basePath . '/CLAUDE.md', $claudeMd);
-        $this->stdout("  ✓ Generated CLAUDE.md\n", 32);
-
         // Add .mcp.json to .gitignore
         $this->addToGitignore($basePath, '.mcp.json');
         $this->stdout("  ✓ Added .mcp.json to .gitignore\n", 32);
@@ -246,14 +232,16 @@ class InstallController extends Controller
         $this->stdout("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n", 32);
 
         $this->stdout("Next steps:\n", 36);
-        $this->stdout("  • Test MCP server: php yii boost/mcp\n", 0);
-        $this->stdout("  • View configuration: php yii boost/info\n", 0);
-        $this->stdout("  • View guidelines: cat " . Yii::getAlias('@app') . "/.ai/guidelines/core/yii2-2.0.45.md\n", 0);
+        $this->stdout("  1. Add Yii2 guidelines to your CLAUDE.md file:\n", 0);
+        $this->stdout("     @include .ai/guidelines/core/yii2-2.0.45.md\n\n", 37);
+        $this->stdout("  2. (Optional) Add ecosystem guidelines:\n", 0);
+        $this->stdout("     See .ai/guidelines/ecosystem/ for additional guidelines\n\n", 37);
+        $this->stdout("  3. Test MCP server: php yii boost/mcp\n", 0);
+        $this->stdout("  4. View configuration: php yii boost/info\n\n", 0);
 
-        $this->stdout("\nConfiguration files created:\n", 36);
+        $this->stdout("Configuration files created:\n", 36);
         $this->stdout("  • .mcp.json (IDE configuration)\n", 0);
         $this->stdout("  • boost.json (package configuration)\n", 0);
-        $this->stdout("  • CLAUDE.md (application guidelines)\n", 0);
         $this->stdout("  • .ai/guidelines/ (framework and ecosystem guidelines)\n\n", 0);
 
         $this->stdout("MCP Server command:\n", 36);

@@ -78,3 +78,4 @@ BSD 3-Clause License. See LICENSE file for details.
 - **Issues**: https://github.com/codeChap/mcp-server-yii2-ai-boost/issues
 - **Repository**: https://github.com/codeChap/mcp-server-yii2-ai-boost
 
+

@@ -1,5 +1,10 @@
 # Yii2 AI Boost - MCP Server for Yii2 Applications
 
+> **⚠️ Status: Active Development**
+>
+> This project is currently in **Phase 2** of development. Core tools are stable, but APIs and features may evolve. 
+> We welcome feedback and contributions!
+
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 ![Yii2](https://img.shields.io/badge/Yii2-2.0.45-orange)

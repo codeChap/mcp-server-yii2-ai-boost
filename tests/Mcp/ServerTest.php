@@ -145,9 +145,9 @@ class ServerTest extends TestCase
             'result' => [
                 'resources' => [
                     [
-                        'uri' => 'guidelines://core',
-                        'name' => 'Yii2 Framework Guidelines',
-                        'description' => 'Comprehensive Yii2 development guidelines',
+                        'uri' => 'config://boost',
+                        'name' => 'Yii2 AI Boost Configuration',
+                        'description' => 'Current Yii2 AI Boost package configuration and status',
                     ],
                 ],
             ],
@@ -157,7 +157,7 @@ class ServerTest extends TestCase
         $decoded = json_decode($json, true);
 
         $this->assertArrayHasKey('resources', $decoded['result']);
-        $this->assertEquals('guidelines://core', $decoded['result']['resources'][0]['uri']);
+        $this->assertEquals('config://boost', $decoded['result']['resources'][0]['uri']);
     }
 
     /**

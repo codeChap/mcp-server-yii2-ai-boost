@@ -480,15 +480,6 @@ class Server extends Component
         $this->log("Registering MCP resources");
 
         try {
-            $this->resources['guidelines://core'] = new Resources\GuidelinesResource([
-                'basePath' => $this->basePath,
-            ]);
-            $this->log("  ✓ Registered resource: guidelines://core");
-        } catch (\Exception $e) {
-            $this->log("  ✗ Failed to register guidelines resource: " . $e->getMessage(), "ERROR");
-        }
-
-        try {
             $this->resources['config://boost'] = new Resources\BoostConfigResource([
                 'basePath' => $this->basePath,
             ]);

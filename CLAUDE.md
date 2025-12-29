@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The package is installable as a Composer dependency and provides:
 - **6 Core Tools** for introspection (application info, database schema, config, routes, components, logs)
-- **2 Resource Types** for documentation (framework guidelines, package config)
+- **1 Resource Type** for package configuration
 - **Installation Wizard** for IDE integration (Claude Code, VS Code, Cursor, PhpStorm)
 - **Comprehensive Logging** across multiple levels (startup, requests, errors, transport)
 
@@ -83,9 +83,9 @@ Yii2 Application Integration
    - Current tools: ApplicationInfo, DatabaseSchema, ConfigAccess, RouteInspector, ComponentInspector
 
 4. **Resources Layer** (`src/Mcp/Resources/`)
-   - Provide static content (documentation, config)
-   - URI-based addressing (`guidelines://core`, `config://boost`)
-   - Current resources: GuidelinesResource, BoostConfigResource
+   - Provide static content (package configuration)
+   - URI-based addressing (`config://boost`)
+   - Current resources: BoostConfigResource
 
 5. **Transport Layer** (`src/Mcp/Transports/StdioTransport.php`)
    - STDIO communication (reads STDIN, writes STDOUT)
@@ -102,7 +102,7 @@ Yii2 Application Integration
 
 **Callback/Handler Pattern**: Transport uses callbacks to decouple I/O from business logic - allows easy transport swapping.
 
-**Resource URI Schema**: Resources use URI-based addressing (`guidelines://core`, `config://boost`) for extensible resource management.
+**Resource URI Schema**: Resources use URI-based addressing (`config://boost`) for extensible resource management.
 
 ## Request Flow (STDIN → STDOUT)
 

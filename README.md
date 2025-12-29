@@ -2,54 +2,111 @@
 
 > **⚠️ Status: Active Development**
 >
-> This project is currently in **Phase 2** of development. Core tools are stable, but APIs and features may evolve. 
-> ! welcome feedback and contributions!
+> This project is currently in **Phase 2** of development. Core tools are ready, but features may evolve, be added or removed.
+> Feedback and contributions are welcome!
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 ![Yii2](https://img.shields.io/badge/Yii2-2.0.45-orange)
 
-Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistants (like Claude) with comprehensive tools and guidelines for Yii2 application development.
+Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistants (like Claude Code) with comprehensive tools and guidelines for faster Yii2 application development.
+
+---
 
 ## Features
 
 - **6 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and more
 - **Framework Guidelines** - Comprehensive Yii2 best practices and patterns
-- **IDE Integration** - Auto-configures MCP server for Claude Code
+- **IDE Integration** - Can be added to editors (like [Zed](https://zed.dev/)) for integration
+
+---
+
+## Quick Start
+
+For experienced developers:
+
+```bash
+# 1. Install package
+composer require codechap/yii2-ai-boost:dev-master --dev
+
+# 2. Run installation
+php yii boost/install
+
+# 3. Add guidelines to your CLAUDE.md (Claude Code only)
+echo "@include .ai/guidelines/core/yii2-2.0.45.md" >> CLAUDE.md
+```
+
+That's it! Claude Code and other AI tools now have access to your application context.
+
+---
 
 ## Installation
 
-### Step 1: Require the Package
+### **Step 1**: Require the Package
+
+> Use "**dev-master**" untill a stable package is ready.
 
 ```bash
 cd /path/to/yii2/application
 composer require codechap/yii2-ai-boost:dev-master --dev
 ```
 
-### Step 2: Run Installation Wizard
+### **Step 2**: Run Installation Wizard
 
 ```bash
 php yii boost/install
 ```
 
-The wizard will:
-- ✓ Detect your Yii2 environment
-- ✓ Generate configuration files
-- ✓ Create guidelines directory
-- ✓ Auto-configure IDE integration (if available)
+The installation runs automatically and:
+- Detects your Yii2 environment
+- Generates configuration files (`.mcp.json`, `boost.json`)
+- Copies framework guidelines to `.ai/guidelines/`
+
+If installation fails, please [open an issue](https://github.com/codechap/yii2-ai-boost/issues) or reach out on [X](https://x.com/codechap).
+
+### **Step 3**: Connect Claude Code and or your IDE
+
+__Claude Code integration__
+
+After running `php yii boost/install`, a `.mcp.json` file will be generated in your project root. Claude Code will automatically detect and use this configuration to connect to the MCP server.
+
+__Codex CLI Configuration__
+@todo
+
+__Gemini CLI Configuration__
+@todo
+
+__Zed Configuration__
+
+For Zed create or open your settings file in .zed/settings.json
+
+```json
+{
+    "context_servers": {
+      "yii2-ai-boost": {
+        "enabled": true,
+        "command": "php",
+        "args" : [
+            "yii", "boost/mcp"
+        ]
+      }
+    }
+}
+```
 
 ### Generated Files
 
 After installation, you'll have:
 
-- **`.mcp.json`** - MCP server configuration for IDEs
+- **`.mcp.json`** - MCP server configuration for Claude Code
 - **`boost.json`** - Package configuration and tool list
-- **`CLAUDE.md`** - Application guidelines with framework patterns
 - **`.ai/guidelines/`** - Framework and ecosystem guidelines
+
+---
 
 ## Usage
 
-### View Installation Status
+### View Yii2 information
 
 ```bash
 php yii boost/info
@@ -66,7 +123,7 @@ Displays:
 php yii boost/mcp
 ```
 
-> ⚠️ **Note**: This command is typically invoked automatically by IDEs. You don't need to run it manually.
+> ⚠️ **Note**: This command is invoked automatically by Cluade Code or your editor. You don't need to run it manually.
 
 The server listens on STDIN for JSON-RPC requests and outputs responses to STDOUT.
 
@@ -76,44 +133,56 @@ The server listens on STDIN for JSON-RPC requests and outputs responses to STDOU
 php yii boost/update
 ```
 
-Updates downloaded guidelines to the latest versions.
+Copies updated guidelines to the relevant folders.
+
+---
+
+## What is MCP?
+
+The **Model Context Protocol (MCP)** is an open standard that enables AI assistants to interact with tools and data sources. MCP allows Claude Code and other AI tools to securely access your application's context—database schemas, configuration, routes, and logs—without exposing sensitive data.
+
+Yii2 AI Boost implements MCP v2025-11-25 using JSON-RPC 2.0 over STDIO transport. This means Claude Code communicates with your application through standard input/output, with no need for network configuration.
+
+[Learn more about MCP](https://modelcontextprotocol.io/)
+
+---
 
 ## Available Tools
 
-### 1. Application Info Tool
+### 1. `application_info` - Application Info
 Get comprehensive information about your Yii2 application:
 - Yii2 and PHP versions
 - Application environment and debug status
 - Installed modules and extensions
 
-### 2. Database Schema Tool
+### 2. `database_schema` - Database Schema
 Inspect your database structure:
 - List all tables with row counts
 - View detailed table schemas (columns, types, constraints)
 - Discover Active Record models
 - View indexes and foreign keys
 
-### 3. Config Access Tool
+### 3. `config_access` - Config Access
 Access application configuration safely:
 - Component configurations
 - Module configurations
 - Application parameters (with sensitive data redaction)
 
-### 4. Route Inspector Tool
+### 4. `route_inspector` - Route Inspector
 Analyze your application routes:
 - URL rules and patterns
 - Module routes with prefixes
 - Controller and action mappings
 - RESTful API endpoints
 
-### 5. Component Inspector Tool
+### 5. `component_inspector` - Component Inspector
 Introspect application components:
 - List all registered components
 - View component classes and configurations
 - Check singleton vs new instance behavior
 - Inspect component properties
 
-### 6. Log Inspector Tool
+### 6. `log_inspector` - Log Inspector
 Inspect application logs from all configured sources:
 - Read logs from FileTarget (text files)
 - Read logs from DbTarget (database table)
@@ -135,30 +204,15 @@ All 6 core tools provide deep introspection into your Yii2 application. They fol
 
 ### How the Log Inspector Works
 
-The Log Inspector is the most advanced tool, featuring a **multi-reader architecture** that handles different log storage methods transparently:
+The Log Inspector features a **multi-reader architecture** supporting three log storage methods:
 
-#### Three Reader Types
+| Reader | Source | Best For | Features |
+|--------|--------|----------|----------|
+| **InMemoryLogReader** | Current request logs (`Yii::getLogger()->messages`) | Real-time debugging during development | Full stack traces, microsecond timestamps |
+| **FileLogReader** | FileTarget text logs (`@runtime/logs/app.log`) | Reviewing logs from previous requests/sessions | Efficient file handling (5MB+ files), auto-detects rotation |
+| **DbLogReader** | DbTarget database table (`{{%log}}`) | Production logging & log aggregation | Fast indexed queries, precise time-range filtering |
 
-**1. InMemoryLogReader**
-- **Source**: Current request logs in `Yii::getLogger()->messages`
-- **Usage**: Real-time debugging, fastest access
-- **Features**: Full stack traces, microsecond precision timestamps
-- **Limitations**: Only current request, cleared on shutdown
-- **Best For**: Immediate diagnostics during development
-
-**2. FileLogReader**
-- **Source**: FileTarget text logs (default: `@runtime/logs/app.log`)
-- **Usage**: Historical logs on disk
-- **Features**: Handles large files efficiently (tails 5MB+ files), auto-detects file rotation
-- **Limitations**: No indexed search, text parsing required
-- **Best For**: Reviewing logs from previous requests/sessions
-
-**3. DbLogReader**
-- **Source**: DbTarget database table (default: `{{%log}}`)
-- **Usage**: Persistent, queryable logs
-- **Features**: Fast indexed queries, precise time-range filtering, optimal for large volumes
-- **Limitations**: Requires database table setup
-- **Best For**: Production logging, log aggregation, performance analysis
+---
 
 ## Tools Roadmap
 
@@ -181,6 +235,8 @@ The Log Inspector is the most advanced tool, featuring a **multi-reader architec
 | 4 | event_inspector | 🔲 Future | Application events, listeners, handlers |
 | 4 | cache_inspector | 🔲 Future | Cache components, performance metrics |
 | 4 | environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
+
+---
 
 ## MCP Protocol
 
@@ -235,115 +291,95 @@ Yii2 AI Boost implements the Model Context Protocol (MCP) v2025-11-25:
 }
 ```
 
+**Response Structure**:
+- `jsonrpc`: Always `"2.0"` per JSON-RPC spec
+- `id`: Echoes the request ID for request/response matching
+- `result`: The actual tool output (sensitive data automatically redacted)
+
+**Error Responses** use `error` instead of `result`:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32603,
+    "message": "Internal error",
+    "data": "Error details here"
+  }
+}
+```
+
+---
+
 ## Guidelines
 
-The package includes comprehensive guidelines for Yii2 development:
+The package downloads comprehensive Yii2 development guidelines to `.ai/guidelines/core/yii2-2.0.45.md`. These cover application structure, controllers, models, views, components, security, performance, and console commands.
 
-### Core Framework Guidelines
-- **File**: `.ai/guidelines/core/yii2-2.0.45.md`
-- **Coverage**: Application structure, controllers, models, views, components, security, performance, console commands
-- **Best Practices**: Common patterns and anti-patterns
+### Including Guidelines in Your AI Workflow
 
-### Ecosystem Guidelines (Coming Soon)
-- Gii code generator patterns
-- Debug module usage
-- RBAC (Role-Based Access Control)
-- RESTful API conventions
+To use these guidelines with Claude Code or other AI tools, add the following line to your project's `CLAUDE.md` file:
 
-All guidelines are included in `CLAUDE.md` for easy reference.
-
-## Configuration
-
-### Manual Configuration
-
-Edit `boost.json` to customize:
-
-```json
-{
-  "version": "1.0.0",
-  "yii2_version": "2.0.45",
-  "tools": {
-    "database_query": {
-      "enabled": true,
-      "readonly": true,
-      "max_rows": 100
-    }
-  }
-}
+```markdown
+@include .ai/guidelines/core/yii2-2.0.45.md
 ```
 
-### IDE Configuration
+This ensures AI assistants have access to framework best practices and patterns when working in your project.
 
-The package auto-generates `.mcp.json` for IDE integration:
-
-```json
-{
-  "mcpServers": {
-    "yii2-boost": {
-      "command": "php",
-      "args": ["yii", "boost/mcp"],
-      "cwd": "/path/to/app"
-    }
-  }
-}
-```
-
-For Zed create or open your settings file in .zed/settings.json
-
-```json
-{
-    "context_servers": {
-      "yii2-ai-boost": {
-        "enabled": true,
-        "command": "php",
-        "args" : [
-            "yii", "boost/mcp"
-        ]
-      }
-    }
-}
-```
+---
 
 ## Troubleshooting
 
-If the MCP server is not working as expected, check the log files:
+### Getting Help
 
-- **Startup Log**: `@runtime/logs/mcp-startup.log` (Initialization status)
-- **Error Log**: `@runtime/logs/mcp-errors.log` (PHP errors and exceptions)
-- **Request Log**: `@runtime/logs/mcp-requests.log` (JSON-RPC traffic)
-- **Transport Log**: `sys_get_temp_dir() . '/mcp-server/mcp-transport.log'` (Low-level transport debug)
+If you encounter issues:
+1. Check the log files listed below for error details
+2. Open an issue: https://github.com/codechap/yii2-ai-boost/issues
+3. Reach out on X: https://x.com/codechap
 
-Ensure that your PHP environment meets the requirements and that the `yii` command is executable.
+### Log Files
 
-### Running Tests
+When debugging, check these log files:
 
-```bash
-composer test              # Run unit tests
-composer test:coverage     # Generate coverage report
-composer cs-check          # Check code style (PSR-12)
-composer analyze           # Run static analysis (PHPStan level 8)
-```
+- **Startup Log**: `@runtime/logs/mcp-startup.log` — Server initialization and tool registration
+- **Error Log**: `@runtime/logs/mcp-errors.log` — PHP errors and exceptions
+- **Request Log**: `@runtime/logs/mcp-requests.log` — JSON-RPC requests and responses
+- **Transport Log**: `/tmp/mcp-server/mcp-transport.log` — Low-level STDIO communication
+
+### FAQ
+
+_This section will be expanded as common questions arise. For now, please reach out with issues or questions._
+
+---
 
 ## Requirements
 
-- **PHP**: >= 7.4
-- **Yii2**: >= 2.0.45
+| Component | Version | Status |
+|-----------|---------|--------|
+| **PHP** | 7.4, 8.0, 8.1, 8.2, 8.3 | ✓ Tested |
+| **Yii2** | 2.0.45+ | ✓ Compatible |
+
+**Note**: PHP 8.4 support pending. Report any compatibility issues on [GitHub](https://github.com/codechap/yii2-ai-boost/issues).
 
 ## Development Timeline
 
-- **Phase 1 (MVP)**: 5 core tools, installation wizard, core guidelines ✓
-- **Phase 2**: 10 additional tools, ecosystem guidelines (in progress)
-- **Phase 3**: Documentation search, optimization, production release
+| Phase | Goal | Status | Tools |
+|-------|------|--------|-------|
+| **1** | Core MVP | ✓ Complete | 6 tools + guidelines + installer |
+| **2** | Extended Tools | In Progress | +10 tools, ecosystem guidelines |
+| **3** | Production Ready | Planned | Optimization, documentation search, stable release |
+
+Track progress and contribute at [GitHub](https://github.com/codechap/yii2-ai-boost).
 
 ## License
 
 BSD 3-Clause License. See LICENSE file for details.
 
-## Support
+## Support & Feedback
 
-- **Issues**: https://github.com/codechap/yii2-ai-boost/issues
-- **Documentation**: See `.ai/guidelines/` directory
+- **Bug Reports & Feature Requests**: [GitHub Issues](https://github.com/codechap/yii2-ai-boost/issues)
+- **Direct Contact**: [@codechap on X](https://x.com/codechap)
+- **Community Contributions**: Pull requests welcome!
 
 ---
 
-**Yii2 AI Boost** - Making Yii2 development smarter with AI assistants.
+**Yii2 AI Boost** - Making Yii2 development smarter and faster with AI assistants.

@@ -17,7 +17,7 @@ class SearchGuidelinesTool extends BaseTool
      */
     private $guidelinesPath;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->guidelinesPath = $this->basePath . '/.ai/guidelines';

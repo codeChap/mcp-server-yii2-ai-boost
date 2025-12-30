@@ -28,7 +28,7 @@ class SyncRulesController extends Controller
      */
     private $zedRulesPath;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->guidelinesPath = \Yii::getAlias('@app/.ai/guidelines');
@@ -78,41 +78,6 @@ class SyncRulesController extends Controller
         $this->stdout("  ✓ Synced Zed rules to {$this->zedRulesPath}\n", 32);
 
         return ExitCode::OK;
-    }
-
-    /**
-     * Update file with user confirmation
-     *
-     * @param string $filePath File path to update
-     * @param string $newContent New file content
-     * @param string $description Description of the file
-     * @return bool Whether the file was updated
-     */
-    private function updateFileWithConfirmation(string $filePath, string $newContent, string $description): bool
-    {
-        $exists = file_exists($filePath);
-
-        if ($exists) {
-            $oldContent = file_get_contents($filePath);
-            if ($oldContent === $newContent) {
-                $this->stdout("  ✓ $description already up-to-date\n", 32);
-                return false;
-            }
-        }
-
-        $this->stdout("\nProposed update to $description:\n", 33);
-        $this->stdout("────────────────────────────────────\n", 33);
-        $this->stdout(substr($newContent, 0, 500) . (strlen($newContent) > 500 ? "\n... (truncated) ...\n" : ""), 0);
-        $this->stdout("────────────────────────────────────\n", 33);
-
-        if ($this->confirm("Apply this update to $description?")) {
-            file_put_contents($filePath, $newContent);
-            $this->stdout("  ✓ Updated $description\n", 32);
-            return true;
-        } else {
-            $this->stdout("  - Skipped updating $description\n", 33);
-            return false;
-        }
     }
 
     /**

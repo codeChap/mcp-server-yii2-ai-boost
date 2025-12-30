@@ -49,28 +49,34 @@ class UpdateController extends Controller
     }
 
     /**
-     * Update guidelines from remote repository
-     *
-     * This is a placeholder for now. In production, this would download
-     * updated guidelines from a remote repository.
+     * Update guidelines from package source
      */
     private function updateGuidelines(): void
     {
-        $basePath = Yii::getAlias('@app');
-        $guidelinesPath = $basePath . '/.ai/guidelines';
+        $appPath = Yii::getAlias('@app');
+        $targetPath = $appPath . '/.ai/guidelines';
+        
+        // Locate source directory relative to this file
+        // src/Commands/UpdateController.php -> .ai/guidelines
+        $packageRoot = dirname(__DIR__, 2);
+        $sourcePath = $packageRoot . '/.ai/guidelines';
 
-        if (!is_dir($guidelinesPath)) {
-            throw new \Exception("Guidelines directory not found. Run 'php yii boost/install' first.");
+        if (!is_dir($sourcePath)) {
+            $this->stdout("  ! Package source guidelines not found at: $sourcePath\n", 33);
+            return;
         }
 
-        // For now, just check that guidelines exist
-        $coreGuidelinesPath = $guidelinesPath . '/core';
-        if (is_dir($coreGuidelinesPath)) {
-            $this->stdout("  ✓ Core guidelines directory exists\n", 32);
+        $this->stdout("  Copying guidelines from package...\n", 0);
+        
+        try {
+            \yii\helpers\FileHelper::copyDirectory($sourcePath, $targetPath, [
+                'dirMode' => 0755,
+                'fileMode' => 0644,
+            ]);
+            $this->stdout("  ✓ Guidelines updated successfully\n", 32);
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to copy guidelines: " . $e->getMessage());
         }
-
-        $this->stdout("  ✓ Guidelines checked\n", 32);
-        $this->stdout("  (Remote download feature coming soon)\n", 36);
     }
 
     /**

@@ -984,3 +984,5 @@ Key principles for Yii2 development:
 8. **Cache strategically** - Database and HTTP caching
 9. **Secure by default** - CSRF, XSS, SQL injection prevention
 10. **Keep it DRY** - Don't repeat yourself
+
+```

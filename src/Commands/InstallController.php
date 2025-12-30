@@ -44,9 +44,9 @@ class InstallController extends Controller
             $this->stdout("\n[3/5] Generating Configuration Files\n", 33);
             $this->generateConfigFiles($envInfo);
 
-            // Step 4: Download guidelines
-            $this->stdout("\n[4/5] Downloading Guidelines\n", 33);
-            $this->downloadGuidelines();
+            // Step 4: Set guidelines
+            $this->stdout("\n[4/5] Setting Guidelines\n", 33);
+            $this->setGuidelines();
 
             // Step 5: Register autoload
             $this->stdout("\n[5/5] Registering Package\n", 33);
@@ -142,11 +142,12 @@ class InstallController extends Controller
             ],
         ];
 
-        file_put_contents(
+        $mcpConfigJson = json_encode($mcpConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $this->updateFileWithConfirmation(
             $basePath . '/.mcp.json',
-            json_encode($mcpConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            $mcpConfigJson,
+            '.mcp.json'
         );
-        $this->stdout("  ✓ Generated .mcp.json\n", 32);
 
         // Generate boost.json
         $boostConfig = [
@@ -167,15 +168,50 @@ class InstallController extends Controller
             ],
         ];
 
-        file_put_contents(
+        $boostConfigJson = json_encode($boostConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $this->updateFileWithConfirmation(
             $basePath . '/boost.json',
-            json_encode($boostConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            $boostConfigJson,
+            'boost.json'
         );
-        $this->stdout("  ✓ Generated boost.json\n", 32);
 
         // Add .mcp.json to .gitignore
         $this->addToGitignore($basePath, '.mcp.json');
-        $this->stdout("  ✓ Added .mcp.json to .gitignore\n", 32);
+    }
+
+    /**
+     * Update file with user confirmation
+     *
+     * @param string $filePath File path to update
+     * @param string $newContent New file content
+     * @param string $description Description of the file
+     * @return bool Whether the file was updated
+     */
+    private function updateFileWithConfirmation(string $filePath, string $newContent, string $description): bool
+    {
+        $exists = file_exists($filePath);
+
+        if ($exists) {
+            $oldContent = file_get_contents($filePath);
+            if ($oldContent === $newContent) {
+                $this->stdout("  ✓ $description already up-to-date\n", 32);
+                return false;
+            }
+        }
+
+        $this->stdout("\nProposed update to $description:\n", 33);
+        $this->stdout("────────────────────────────────────\n", 33);
+        $this->stdout($newContent, 0);
+        $this->stdout("────────────────────────────────────\n", 33);
+
+        if ($this->confirm("Apply this update to $description?")) {
+            file_put_contents($filePath, $newContent);
+            $this->stdout("  ✓ Updated $description\n", 32);
+            return true;
+        } else {
+            $this->stdout("  - Skipped updating $description\n", 33);
+            return false;
+        }
     }
 
     /**
@@ -191,10 +227,21 @@ class InstallController extends Controller
         if (file_exists($gitignore)) {
             $content = file_get_contents($gitignore);
             if (stripos($content, $entry) === false) {
-                file_put_contents($gitignore, "\n$entry\n", FILE_APPEND);
+                $this->stdout("\nProposed update to .gitignore:\n", 33);
+                $this->stdout("  + $entry\n", 32);
+
+                if ($this->confirm("Add $entry to .gitignore?")) {
+                    file_put_contents($gitignore, "\n$entry\n", FILE_APPEND);
+                    $this->stdout("  ✓ Added $entry to .gitignore\n", 32);
+                } else {
+                    $this->stdout("  - Skipped adding to .gitignore\n", 33);
+                }
+            } else {
+                $this->stdout("  ✓ .gitignore already contains $entry\n", 32);
             }
         } else {
             file_put_contents($gitignore, "$entry\n");
+            $this->stdout("  ✓ Created .gitignore with $entry\n", 32);
         }
     }
 
@@ -204,7 +251,7 @@ class InstallController extends Controller
      * This is a placeholder for now. In production, this would download
      * guidelines from a remote repository.
      */
-    private function downloadGuidelines(): void
+    private function setGuidelines(): void
     {
         $basePath = Yii::getAlias('@app');
         $guidelinesPath = $basePath . '/.ai/guidelines/core';

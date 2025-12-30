@@ -28,9 +28,16 @@ class BoostController extends Controller
      *
      * @return int
      */
-    public function actionIndex(): int
+    public function actionIndex()
     {
-        return $this->actionInfo();
+        $this->stdout("Yii2 AI Boost CLI\n", 36);
+        $this->stdout("Available commands:\n");
+        $this->stdout("  yii boost/install    - Initialize directories and config\n");
+        $this->stdout("  yii boost/mcp        - Run the MCP server (stdio mode)\n");
+        $this->stdout("  yii boost/info       - Show application info\n");
+        $this->stdout("  yii boost/sync-rules - Sync AI guidelines to editor rules\n");
+        $this->stdout("  yii boost/update     - Update guidelines\n");
+        return ExitCode::OK;
     }
 
     /**
@@ -63,6 +70,17 @@ class BoostController extends Controller
     public function actionInfo(): int
     {
         $controller = new InfoController('boost/info', \Yii::$app);
+        return $controller->runAction('index');
+    }
+
+    /**
+     * Sync AI guidelines to editor rules
+     *
+     * @return int
+     */
+    public function actionSyncRules(): int
+    {
+        $controller = new SyncRulesController('boost/sync-rules', \Yii::$app);
         return $controller->runAction('index');
     }
 

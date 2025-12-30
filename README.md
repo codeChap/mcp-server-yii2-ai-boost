@@ -15,8 +15,9 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 ## Features
 
-- **6 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and more
-- **Framework Guidelines** - Comprehensive Yii2 best practices and patterns
+- **7 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and **Guideline Search**
+- **Framework Guidelines** - Comprehensive Yii2 best practices and patterns (Markdown format)
+- **Editor Sync** - Automatically syncs guidelines to [Cursor](https://cursor.sh) and [Zed](https://zed.dev/) editor configurations
 - **IDE Integration** - Can be added to editors (like [Zed](https://zed.dev/)) for integration
 
 ---
@@ -32,8 +33,8 @@ composer require codechap/yii2-ai-boost:dev-master --dev
 # 2. Run installation
 php yii boost/install
 
-# 3. Add guidelines to your CLAUDE.md (Claude Code only)
-echo "@include .ai/guidelines/core/yii2-2.0.45.md" >> CLAUDE.md
+# 3. Sync guidelines to your editor (Cursor/Zed)
+php yii boost/sync-rules
 ```
 
 That's it! Claude Code and other AI tools now have access to your application context.
@@ -100,7 +101,9 @@ After installation, you'll have:
 
 - **`.mcp.json`** - MCP server configuration for Claude Code
 - **`boost.json`** - Package configuration and tool list
-- **`.ai/guidelines/`** - Framework and ecosystem guidelines
+- **`.ai/guidelines/`** - Framework and ecosystem guidelines (Markdown)
+- **`.cursor/rules/yii2-boost.mdc`** - (Optional) Generated rules for Cursor
+- **`.rules`** - (Optional) Generated rules for Zed
 
 ---
 
@@ -116,6 +119,18 @@ Displays:
 - Package version and configuration
 - List of available MCP tools
 - Status of guidelines and configuration files
+
+### Sync Editor Rules
+
+```bash
+php yii boost/sync-rules
+```
+
+Automatically generates:
+- **Cursor**: `.cursor/rules/yii2-boost.mdc`
+- **Zed**: `.rules` (in project root)
+
+These files contain the core Yii2 guidelines and structural references, giving your AI editor "X-Ray vision" into Yii2 best practices without manual prompting.
 
 ### Start MCP Server (Manual Testing)
 
@@ -134,6 +149,24 @@ php yii boost/update
 ```
 
 Copies updated guidelines to the relevant folders.
+
+---
+
+## Guidelines & Editor Integration
+
+Yii2 AI Boost comes with a rich library of "Context Anchors" in `.ai/guidelines/`. These are Markdown files that define exact structures for Yii2 components (Controllers, Models, Migrations, etc.), preventing AI hallucinations.
+
+### 1. Active Search (MCP Tool)
+The MCP server includes a `search_guidelines` tool. AI agents (like Claude or Gemini) can use this to "look up" how to do things in Yii2.
+*   *User:* "How do I create a migration?"
+*   *AI:* Calls `search_guidelines(query="migration")` -> Reads `database/yii-migration.md` -> Writes perfect code.
+
+### 2. Passive Context (Editor Rules)
+Run `php yii boost/sync-rules` to bake these guidelines directly into your editor's context.
+*   **Cursor**: Creates a `.mdc` rule file.
+*   **Zed**: Creates a `.rules` file.
+
+This means when you open a file in Zed or Cursor, the AI *already knows* it should use `yii\web\Controller` and not `Illuminate\Routing\Controller`.
 
 ---
 
@@ -192,6 +225,13 @@ Inspect application logs from all configured sources:
 - Search logs by keywords
 - Filter by time range
 - View stack traces (for in-memory logs)
+
+### 7. `search_guidelines` - Guideline Search
+Search the local Yii2 AI Guidelines database:
+- Find best practices for Controllers, Models, Migrations, etc.
+- Retrieve structural reference code to prevent hallucinations
+- Filter by category (e.g., 'database', 'security', 'views')
+- Returns full Markdown content of the most relevant guides
 
 ## Core Tools Architecture
 
@@ -317,10 +357,11 @@ The package downloads comprehensive Yii2 development guidelines to `.ai/guidelin
 
 ### Including Guidelines in Your AI Workflow
 
-To use these guidelines with Claude Code or other AI tools, add the following line to your project's `CLAUDE.md` file:
+To use these guidelines with Claude Code or other AI tools, add the following lines to your project's `CLAUDE.md` file:
 
 ```markdown
 @include .ai/guidelines/core/yii2-2.0.45.md
+@include .ai/guidelines/console/yii-console-controller.php
 ```
 
 This ensures AI assistants have access to framework best practices and patterns when working in your project.

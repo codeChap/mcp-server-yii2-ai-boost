@@ -246,23 +246,43 @@ class InstallController extends Controller
     }
 
     /**
-     * Download guidelines from remote repository
-     *
-     * This is a placeholder for now. In production, this would download
-     * guidelines from a remote repository.
+     * Copy guidelines from package to application
      */
     private function setGuidelines(): void
     {
-        $basePath = Yii::getAlias('@app');
-        $guidelinesPath = $basePath . '/.ai/guidelines/core';
+        $appBasePath = Yii::getAlias('@app');
+        $targetPath = $appBasePath . '/.ai/guidelines';
+        
+        // Determine package root (vendor/codechap/yii2-ai-boost)
+        // This file is in src/Commands/InstallController.php
+        $packageRoot = dirname(__DIR__, 2);
+        $sourcePath = $packageRoot . '/.ai/guidelines';
 
-        // For now, create an empty placeholder file
-        // This will be populated with actual guidelines
-        $placeholderFile = $guidelinesPath . '/yii2-2.0.45.md';
-
-        if (!file_exists($placeholderFile)) {
-            file_put_contents($placeholderFile, "# Yii2 Framework Guidelines\n\n[Guidelines will be downloaded in a future version]\n");
-            $this->stdout("  ✓ Created guidelines placeholder\n", 32);
+        if (is_dir($sourcePath)) {
+            try {
+                FileHelper::copyDirectory($sourcePath, $targetPath, [
+                    'dirMode' => 0755,
+                    'fileMode' => 0644,
+                ]);
+                $this->stdout("  ✓ Copied guidelines from package\n", 32);
+            } catch (\Exception $e) {
+                $this->stderr("  ✗ Failed to copy guidelines: " . $e->getMessage() . "\n", 31);
+            }
+        } else {
+            // Fallback if source not found (e.g. slight difference in dev vs prod structure)
+            $this->stdout("  ! Guidelines source not found at: $sourcePath\n", 33);
+            
+            // Create placeholder
+            $placeholderPath = $targetPath . '/core';
+            if (!is_dir($placeholderPath)) {
+                FileHelper::createDirectory($placeholderPath);
+            }
+            
+            $placeholderFile = $placeholderPath . '/yii2-2.0.45.md';
+            if (!file_exists($placeholderFile)) {
+                file_put_contents($placeholderFile, "# Yii2 Framework Guidelines\n\n[Guidelines could not be copied automatically]\n");
+                $this->stdout("  ✓ Created guidelines placeholder\n", 32);
+            }
         }
     }
 

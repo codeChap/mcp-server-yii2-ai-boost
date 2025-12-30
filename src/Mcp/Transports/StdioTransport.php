@@ -33,10 +33,18 @@ class StdioTransport
     private $logFile;
 
     /**
-     * Constructor - initialize streams
+     * @var string|null Base path for resolving runtime directory
      */
-    public function __construct()
+    private $basePath;
+
+    /**
+     * Constructor - initialize streams
+     * 
+     * @param string|null $basePath Application base path for logging
+     */
+    public function __construct(?string $basePath = null)
     {
+        $this->basePath = $basePath;
         $this->stdin = fopen('php://stdin', 'r');
         $this->stdout = fopen('php://stdout', 'w');
 
@@ -52,6 +60,19 @@ class StdioTransport
      */
     private function getLogFile(): string
     {
+        // Try to use application runtime directory first
+        if ($this->basePath) {
+            $runtimeLogDir = $this->basePath . '/runtime/logs';
+            if (!is_dir($runtimeLogDir)) {
+                @mkdir($runtimeLogDir, 0755, true);
+            }
+            
+            if (is_dir($runtimeLogDir) && is_writable($runtimeLogDir)) {
+                return $runtimeLogDir . '/mcp-transport.log';
+            }
+        }
+
+        // Fallback to system temp directory
         $runtimeDir = sys_get_temp_dir() . '/mcp-server';
         if (!is_dir($runtimeDir)) {
             @mkdir($runtimeDir, 0755, true);

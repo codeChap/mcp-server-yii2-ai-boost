@@ -101,11 +101,16 @@ class LogInspectorTool extends BaseTool
         $includeTrace = (bool) ($arguments['include_trace'] ?? false);
 
         // Prepare parameters for readers
-        $params = [
+        // We request (limit + offset) items from each reader starting at offset 0.
+        // This is necessary because we can't know which source has the relevant logs
+        // for the requested page without fetching and merging them first.
+        // We apply the actual offset and limit AFTER merging and sorting.
+        $fetchLimit = $limit + $offset;
+        $readerParams = [
             'levels' => $levels,
             'categories' => $categories,
-            'limit' => $limit,
-            'offset' => $offset,
+            'limit' => $fetchLimit,
+            'offset' => 0, // Always fetch from start to ensure correct global ordering
             'search' => $search,
             'time_range' => $timeRange,
             'include_trace' => $includeTrace,
@@ -116,7 +121,7 @@ class LogInspectorTool extends BaseTool
 
         // Collect logs from all available readers
         $allLogs = [];
-        $allSummaries = [];
+        $totalAvailable = 0;
         $targetsQueried = [];
         $warnings = [];
 
@@ -126,7 +131,7 @@ class LogInspectorTool extends BaseTool
                 continue;
             }
 
-            $result = $reader->read($params);
+            $result = $reader->read($readerParams);
             $targetsQueried[] = $reader->getSource();
 
             if (isset($result['error'])) {
@@ -135,18 +140,21 @@ class LogInspectorTool extends BaseTool
             }
 
             $allLogs = array_merge($allLogs, $result['logs'] ?? []);
-            $allSummaries[] = $result['summary'] ?? [];
+            
+            // Sum up total available logs from all sources
+            if (isset($result['summary']['total_available'])) {
+                $totalAvailable += (int)$result['summary']['total_available'];
+            }
         }
 
         // Sort all logs by timestamp descending
         usort($allLogs, fn($a, $b) => $b['timestamp'] <=> $a['timestamp']);
 
         // Re-apply limit and offset across all sources
-        $totalAvailable = count($allLogs);
         $paginatedLogs = array_slice($allLogs, $offset, $limit);
 
         // Build aggregated summary
-        $summary = $this->buildSummary($paginatedLogs, $allLogs, $targetsQueried);
+        $summary = $this->buildSummary($paginatedLogs, $allLogs, $targetsQueried, $totalAvailable);
 
         return $this->sanitize([
             'logs' => $paginatedLogs,
@@ -185,9 +193,10 @@ class LogInspectorTool extends BaseTool
      * @param array $paginatedLogs Logs after pagination
      * @param array $allLogs All logs before pagination
      * @param array $targetsQueried Targets that were queried
+     * @param int $totalAvailable Total logs available across all sources
      * @return array
      */
-    private function buildSummary(array $paginatedLogs, array $allLogs, array $targetsQueried): array
+    private function buildSummary(array $paginatedLogs, array $allLogs, array $targetsQueried, int $totalAvailable): array
     {
         $levelsFound = [];
         $earliestTime = null;
@@ -210,7 +219,7 @@ class LogInspectorTool extends BaseTool
         }
 
         return [
-            'total_available' => count($allLogs),
+            'total_available' => $totalAvailable,
             'returned' => count($paginatedLogs),
             'sources' => $sourceCount,
             'levels_found' => array_keys($levelsFound),

@@ -1,71 +1,66 @@
+# Yii2 Mailer
+
+## Configuration
 ```php
-<?php
+// config/web.php
+'components' => [
+    'mailer' => [
+        'class' => 'yii\swiftmailer\Mailer',
+        'viewPath' => '@app/mail',
+        'useFileTransport' => false, // Set true for dev (saves to @runtime/mail)
+        'transport' => [
+            'class' => 'Swift_SmtpTransport',
+            'host' => 'smtp.example.com',
+            'username' => 'user',
+            'password' => 'pass',
+            'port' => '587',
+            'encryption' => 'tls',
+        ],
+    ],
+],
+```
 
-/**
- * AI Guideline: Yii 2.0 Mailer Structure
- * 
- * This file serves as a reference for sending emails in Yii 2.
- * Yii supports composing and sending emails via different transport layers.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-mail-mailerinterface
- */
+## Sending Email
+```php
+// Simple text email
+Yii::$app->mailer->compose()
+    ->setFrom('from@example.com')
+    ->setTo('to@example.com')
+    ->setSubject('Subject')
+    ->setTextBody('Plain text content')
+    ->send();
 
-namespace yii\mail;
+// HTML email with view template
+Yii::$app->mailer->compose('contact/html', ['model' => $model])
+    ->setFrom('from@example.com')
+    ->setTo($model->email)
+    ->setSubject('Contact Form')
+    ->send();
 
-use yii\base\Component;
+// With attachment
+Yii::$app->mailer->compose()
+    ->setTo('to@example.com')
+    ->setSubject('Report')
+    ->attach('/path/to/file.pdf')
+    ->attachContent($content, ['fileName' => 'report.pdf'])
+    ->send();
+```
 
-/**
- * MailerInterface is the interface that should be implemented by mailer classes.
- */
-interface MailerInterface
-{
-    /**
-     * Creates a new message instance.
-     * @return MessageInterface message instance.
-     */
-    public function compose($view = null, array $params = []);
+## Email Views
+```php
+<!-- mail/contact/html.php -->
+<p>Hello <?= $model->name ?>,</p>
+<p>Thank you for contacting us.</p>
 
-    /**
-     * Sends the given message.
-     * @param MessageInterface $message message instance to be sent
-     * @return bool whether the message has been sent successfully
-     */
-    public function send($message);
+<!-- mail/contact/text.php -->
+Hello <?= $model->name ?>,
+Thank you for contacting us.
+```
 
-    /**
-     * Sends multiple messages at once.
-     * @param array $messages list of messages to be sent
-     * @return int number of messages that are successfully sent
-     */
-    public function sendMultiple(array $messages);
-}
-
-/**
- * MessageInterface is the interface that should be implemented by message classes.
- */
-interface MessageInterface
-{
-    public function setFrom($from);
-    public function setTo($to);
-    public function setCc($cc);
-    public function setBcc($bcc);
-    public function setSubject($subject);
-    public function setTextBody($text);
-    public function setHtmlBody($html);
-    public function attach($fileName, array $options = []);
-    public function send(MailerInterface $mailer = null);
-}
-
-/**
- * Example Usage
- * 
- * ```php
- * Yii::$app->mailer->compose('contact/html', ['contactForm' => $form])
- *     ->setFrom('from@domain.com')
- *     ->setTo($form->email)
- *     ->setSubject($form->subject)
- *     ->send();
- * ```
- */
-class ExampleUsage {}
-\n```
+## Compose with Both HTML and Text
+```php
+Yii::$app->mailer->compose([
+    'html' => 'contact/html',
+    'text' => 'contact/text',
+], ['model' => $model]);
+```

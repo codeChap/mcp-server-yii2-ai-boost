@@ -1,76 +1,58 @@
+# Yii2 Queue (yii2-queue extension)
+
+## Installation
+```bash
+composer require yiisoft/yii2-queue
+```
+
+## Configuration
 ```php
-<?php
+// config/web.php
+'components' => [
+    'queue' => [
+        'class' => \yii\queue\db\Queue::class, // or Redis, AMQP, etc.
+        'db' => 'db',
+        'tableName' => '{{%queue}}',
+        'channel' => 'default',
+        'as log' => \yii\queue\LogBehavior::class,
+    ],
+],
+```
 
-/**
- * AI Guideline: Yii 2.0 Queue (Extension) Structure
- * 
- * This file serves as a reference for using Queues in Yii 2 (yii2-queue).
- * Queues allow you to offload tasks to be processed asynchronously.
- * 
- * @see https://github.com/yiisoft/yii2-queue
- */
-
-namespace yii\queue;
-
-use yii\base\Component;
-use yii\base\BaseObject;
-
-/**
- * Job Interface.
- * 
- * All job classes must implement this interface.
- */
-interface JobInterface
-{
-    /**
-     * @param Queue $queue which pushed and is handling the job
-     * @return void|mixed result of the job execution
-     */
-    public function execute($queue);
-}
-
-/**
- * Queue Component.
- * 
- * Handles pushing jobs to the queue.
- */
-abstract class Queue extends Component
-{
-    /**
-     * Pushes job into queue.
-     * 
-     * @param JobInterface|mixed $job
-     * @return string|null id of the pushed message
-     */
-    public function push($job)
-    {
-        return 'job-id';
-    }
-
-    /**
-     * Pushes job into queue with delay.
-     * 
-     * @param int $delay
-     * @param JobInterface|mixed $job
-     * @return string|null id of the pushed message
-     */
-    public function delay($delay, $job)
-    {
-        return 'job-id';
-    }
-}
-
-/**
- * Example Job Class
- */
-class ExampleJob extends BaseObject implements JobInterface
+## Create a Job
+```php
+class DownloadJob extends \yii\base\BaseObject implements \yii\queue\JobInterface
 {
     public $url;
     public $file;
-    
+
     public function execute($queue)
     {
         file_put_contents($this->file, file_get_contents($this->url));
     }
 }
-\n```
+```
+
+## Push Jobs
+```php
+// Push to queue
+$id = Yii::$app->queue->push(new DownloadJob([
+    'url' => 'https://example.com/file.pdf',
+    'file' => '/path/to/save.pdf',
+]));
+
+// Push with delay (seconds)
+Yii::$app->queue->delay(60)->push(new SendEmailJob([...]));
+```
+
+## Run Worker
+```bash
+php yii queue/listen    # Daemon mode
+php yii queue/run       # Process and exit
+```
+
+## Available Backends
+- `yii\queue\db\Queue` - Database
+- `yii\queue\redis\Queue` - Redis
+- `yii\queue\amqp\Queue` - RabbitMQ
+- `yii\queue\beanstalk\Queue` - Beanstalkd

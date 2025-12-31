@@ -1,87 +1,85 @@
+# Yii2 Authentication & RBAC
+
+## User Component
 ```php
-<?php
+// Check auth status
+Yii::$app->user->isGuest;      // true if not logged in
+Yii::$app->user->identity;     // Current user model or null
+Yii::$app->user->id;           // Current user ID
 
-/**
- * AI Guideline: Yii 2.0 Auth and RBAC Structure
- * 
- * This file serves as a reference for Authentication and Authorization (RBAC) in Yii 2.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-web-user
- * @see https://www.yiiframework.com/doc/api/2.0/yii-rbac-managerinterface
- */
+// Login/Logout
+Yii::$app->user->login($identity, $duration = 0);
+Yii::$app->user->logout($destroySession = true);
 
-namespace yii\web;
+// Permission check
+Yii::$app->user->can('updatePost', ['post' => $post]);
+```
 
-use yii\base\Component;
-
-/**
- * User component manages the user authentication status.
- */
-class User extends Component
+## Identity Interface
+```php
+class User extends ActiveRecord implements IdentityInterface
 {
-    /**
-     * Logs in a user.
-     * @param IdentityInterface $identity the user identity (which should already be authenticated)
-     * @param int $duration number of seconds that the user can remain in logged-in status.
-     * @return bool whether the user is logged in.
-     */
-    public function login($identity, $duration = 0)
+    public static function findIdentity($id)
     {
-        return true;
+        return static::findOne($id);
     }
 
-    /**
-     * Logs out the current user.
-     * @return bool whether the user is logged out.
-     */
-    public function logout($destroySession = true)
+    public static function findIdentityByAccessToken($token, $type = null)
     {
-        return true;
+        return static::findOne(['access_token' => $token]);
     }
 
-    /**
-     * Returns a value indicating whether the user is a guest (not authenticated).
-     * @return bool whether the current user is a guest.
-     */
-    public function getIsGuest()
+    public function getId()
     {
-        return true;
+        return $this->id;
     }
 
-    /**
-     * Checks if the user can perform the operation as specified by the given permission.
-     * @param string $permissionName the name of the permission (e.g. "editPost")
-     * @param array $params name-value pairs that would be passed to the rules associated with the roles and permissions.
-     * @return bool whether the user can perform the operation.
-     */
-    public function can($permissionName, $params = [], $allowCaching = true)
+    public function getAuthKey()
     {
-        return true;
+        return $this->auth_key;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return $this->auth_key === $authKey;
     }
 }
+```
 
-/**
- * IdentityInterface should be implemented by the class representing the user identity.
- */
-interface IdentityInterface
-{
-    public static function findIdentity($id);
-    public static function findIdentityByAccessToken($token, $type = null);
-    public function getId();
-    public function getAuthKey();
-    public function validateAuthKey($authKey);
-}
+## RBAC Manager
+```php
+$auth = Yii::$app->authManager;
 
-/**
- * RBAC Manager Interface (AuthManager)
- */
-interface ManagerInterface 
+// Create permission
+$createPost = $auth->createPermission('createPost');
+$createPost->description = 'Create a post';
+$auth->add($createPost);
+
+// Create role
+$author = $auth->createRole('author');
+$auth->add($author);
+$auth->addChild($author, $createPost);
+
+// Assign role to user
+$auth->assign($author, $userId);
+
+// Check permission
+$auth->checkAccess($userId, 'createPost');
+```
+
+## Access Control Filter
+```php
+public function behaviors()
 {
-    public function checkAccess($userId, $permissionName, $params = []);
-    public function createRole($name);
-    public function createPermission($name);
-    public function add($object);
-    public function assign($role, $userId);
-    public function getRole($name);
+    return [
+        'access' => [
+            'class' => AccessControl::class,
+            'rules' => [
+                ['actions' => ['login'], 'allow' => true, 'roles' => ['?']], // Guests
+                ['actions' => ['logout'], 'allow' => true, 'roles' => ['@']], // Authenticated
+                ['allow' => true, 'roles' => ['admin']],
+            ],
+        ],
+    ];
 }
-\n```
+```

@@ -1,124 +1,83 @@
+# Yii2 Active Record
+
 ```php
-<?php
-
-/**
- * AI Guideline: Yii 2.0 Active Record Structure
- * 
- * This file serves as a reference for creating Active Record models in Yii 2.
- * Active Record provides an object-oriented interface for accessing and manipulating database data.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-db-activerecord
- */
-
 namespace yii\db;
 
-use yii\base\Model;
-
-/**
- * ActiveRecord is the base class for classes representing relational data in terms of objects.
- * 
- * Key Concepts:
- * - Represents a single row in a database table.
- * - Attributes correspond to table columns.
- * - Relations allow accessing related data (e.g., $user->posts).
- * - Scenarios allow different validation rules for different contexts.
- */
 class ActiveRecord extends Model
 {
-    /**
-     * Declares the name of the database table associated with this AR class.
-     * By default this method returns the class name as the table name.
-     * 
-     * @return string the table name
-     */
     public static function tableName()
     {
         return '{{%table_name}}';
     }
 
-    /**
-     * Returns the primary key name(s) for this AR class.
-     * 
-     * @return string[] the primary keys of the associated database table.
-     */
     public static function primaryKey()
     {
         return ['id'];
     }
 
-    /**
-     * Returns the validation rules for attributes.
-     * 
-     * @return array validation rules
-     */
     public function rules()
     {
         return [
-            [['attribute1', 'attribute2'], 'required'],
+            [['field1', 'field2'], 'required'],
             ['email', 'email'],
             ['status', 'integer'],
             ['title', 'string', 'max' => 255],
+            ['field', 'unique'],
+            ['field', 'in', 'range' => [1, 2, 3]],
         ];
     }
 
-    /**
-     * Declares the relations for this AR class.
-     * 
-     * @return ActiveQuery the relational query object.
-     */
-    public function getRelationName()
+    // Relations
+    public function getRelatedOne()
     {
-        // hasOne: $this->hasOne(RelatedModel::class, ['related_key' => 'local_key']);
-        // hasMany: $this->hasMany(RelatedModel::class, ['related_key' => 'local_key']);
-        return $this->hasOne(ActiveRecord::class, ['id' => 'related_id']);
+        return $this->hasOne(Related::class, ['id' => 'related_id']);
     }
 
-    /**
-     * Saves the current record.
-     * 
-     * This method will insert a row into the database if the record is new,
-     * or update an existing row if the record is not new.
-     * 
-     * @param bool $runValidation whether to perform validation (calling validate())
-     * @param array $attributeNames list of attribute names that need to be saved. Defaults to null,
-     * meaning all attributes that are loaded from DB will be saved.
-     * @return bool whether the saving succeeded (i.e. no validation errors occurred).
-     */
-    public function save($runValidation = true, $attributeNames = null)
+    public function getRelatedMany()
     {
-        return true;
+        return $this->hasMany(Related::class, ['parent_id' => 'id']);
     }
 
-    /**
-     * Deletes the table row corresponding to this active record.
-     * 
-     * @return int|false the number of rows deleted, or false if the deletion is unsuccessful.
-     */
-    public function delete()
-    {
-        return 1;
-    }
-
-    /**
-     * Finds a single active record with the specified condition.
-     * 
-     * @param mixed $condition primary key value or a set of column values
-     * @return static|null the populated active record instance, or null if not found.
-     */
-    public static function findOne($condition)
-    {
-        return null;
-    }
-
-    /**
-     * Finds all active records satisfying the specified condition.
-     * 
-     * @param mixed $condition primary key value or a set of column values
-     * @return static[] an array of active record instances, or an empty array if nothing matches.
-     */
-    public static function findAll($condition)
-    {
-        return [];
-    }
+    // CRUD
+    public static function find();                    // Returns ActiveQuery
+    public static function findOne($condition);       // Single record or null
+    public static function findAll($condition);       // Array of records
+    public function save($runValidation = true);      // Insert or update
+    public function delete();                         // Delete record
+    public function validate($attributeNames = null); // Validate attributes
 }
-\n```
+```
+
+## Query Examples
+```php
+// Find
+$user = User::findOne(1);
+$user = User::findOne(['email' => 'test@example.com']);
+$users = User::find()->where(['status' => 1])->all();
+
+// Eager loading (avoid N+1)
+$users = User::find()->with('profile', 'posts')->all();
+
+// Query builder
+User::find()
+    ->select(['id', 'username'])
+    ->where(['status' => 1])
+    ->andWhere(['>', 'created_at', $date])
+    ->orderBy(['created_at' => SORT_DESC])
+    ->limit(10)
+    ->asArray()
+    ->all();
+
+// Save
+$user = new User();
+$user->username = 'john';
+$user->save();
+
+// Update
+$user->updateAttributes(['status' => 2]);
+User::updateAll(['status' => 0], ['<', 'last_login', $expiry]);
+
+// Delete
+$user->delete();
+User::deleteAll(['status' => 0]);
+```

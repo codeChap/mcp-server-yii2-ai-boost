@@ -1,60 +1,66 @@
+# Yii2 Helper Classes
+
+## ArrayHelper
 ```php
-<?php
+use yii\helpers\ArrayHelper;
 
-/**
- * AI Guideline: Yii 2.0 Framework Specific Utilities
- * 
- * This file serves as a reference for Yii-specific utility classes.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-helpers-arrayhelper
- * @see https://www.yiiframework.com/doc/api/2.0/yii-helpers-url
- */
+// Get value with dot notation
+ArrayHelper::getValue($array, 'user.name', 'default');
 
-namespace yii\helpers;
+// Build key-value map from objects/arrays
+ArrayHelper::map($models, 'id', 'name');
+// Result: [1 => 'John', 2 => 'Jane']
 
-/**
- * ArrayHelper provides additional array functionality.
- */
-class ArrayHelper
-{
-    /**
-     * Retrieves the value of an array element or object property with the given key or property name.
-     */
-    public static function getValue($array, $key, $default = null) {}
+// Index array by key
+ArrayHelper::index($models, 'id');
 
-    /**
-     * Index an array according to a specified key.
-     */
-    public static function index($array, $key) {}
+// Get column values
+ArrayHelper::getColumn($models, 'name');
 
-    /**
-     * Builds a map (key-value pairs) from a multidimensional array or an array of objects.
-     */
-    public static function map($array, $from, $to, $group = null) {}
-}
+// Merge arrays recursively
+ArrayHelper::merge($array1, $array2);
 
-/**
- * Url provides static methods to manage URLs.
- */
-class Url
-{
-    /**
-     * Creates a URL for the given route.
-     * 
-     * @param array|string $route
-     * @param bool|string $scheme
-     * @return string
-     */
-    public static function to($route, $scheme = false) {}
+// Check if key exists
+ArrayHelper::keyExists('key', $array);
 
-    /**
-     * Creates a URL based on the given route.
-     */
-    public static function toRoute($route, $scheme = false) {}
+// Remove element
+ArrayHelper::remove($array, 'key');
+```
 
-    /**
-     * Returns the current URL.
-     */
-    public static function current(array $params = [], $scheme = false) {}
-}
-\n```
+## Url Helper
+```php
+use yii\helpers\Url;
+
+// Create URL
+Url::to(['site/index']);                    // /site/index
+Url::to(['post/view', 'id' => 1]);          // /post/view?id=1
+Url::to(['post/view', 'id' => 1], true);    // Absolute URL
+Url::to(['post/view', 'id' => 1], 'https'); // Force HTTPS
+
+// Current URL
+Url::current();
+Url::current(['page' => 2]); // Add/modify params
+
+// Home URL
+Url::home();
+```
+
+## Html Helper
+```php
+use yii\helpers\Html;
+
+Html::encode($text);                         // XSS-safe
+Html::a('Link', ['site/index']);             // Anchor tag
+Html::img('@web/logo.png');                  // Image tag
+Html::tag('div', 'content', ['class' => 'box']);
+Html::ul(['item1', 'item2']);                // Unordered list
+```
+
+## Json Helper
+```php
+use yii\helpers\Json;
+
+Json::encode($data);
+Json::decode($json);
+Json::htmlEncode($data); // Safe for embedding in HTML
+```

@@ -1,118 +1,83 @@
+# Yii2 Views & Templating
+
 ```php
-<?php
-
-/**
- * AI Guideline: Yii 2.0 View and Templating Structure
- * 
- * This file serves as a reference for creating Views in Yii 2.
- * Views are responsible for presenting data to end users.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-web-view
- */
-
 namespace yii\web;
 
-use yii\base\View as BaseView;
+class View extends \yii\base\View
+{
+    public $title;           // Page title
+    public $params = [];     // Shared params (breadcrumbs, etc.)
+
+    // Asset registration
+    public function registerMetaTag($options, $key = null);
+    public function registerLinkTag($options, $key = null);
+    public function registerCss($css, $options = [], $key = null);
+    public function registerCssFile($url, $options = [], $key = null);
+    public function registerJs($js, $position = self::POS_READY, $key = null);
+    public function registerJsFile($url, $options = [], $key = null);
+
+    // JS positions
+    const POS_HEAD = 1;   // In <head>
+    const POS_BEGIN = 2;  // Start of <body>
+    const POS_END = 3;    // End of <body>
+    const POS_READY = 4;  // jQuery ready
+    const POS_LOAD = 5;   // Window load
+}
+```
+
+## View Files
+```php
+<!-- views/site/index.php -->
+<?php
 use yii\helpers\Html;
 
-/**
- * View represents a view object in the MVC pattern.
- * 
- * It provides a set of methods to helper render standard HTML tags and manage assets.
- */
-class View extends BaseView
-{
-    /**
-     * @var string the page title
-     */
-    public $title;
+$this->title = 'Page Title';
+$this->params['breadcrumbs'][] = 'Home';
+?>
 
-    /**
-     * @var array parameters to be shared among views (e.g. breadcrumbs)
-     */
-    public $params = [];
+<h1><?= Html::encode($this->title) ?></h1>
+<p><?= Html::encode($message) ?></p>
 
-    /**
-     * Registers a meta tag.
-     * 
-     * @param array $options the HTML attributes for the meta tag.
-     * @param string $key the key that identifies the meta tag.
-     */
-    public function registerMetaTag($options, $key = null)
-    {
-    }
+<!-- Link -->
+<?= Html::a('Click', ['controller/action', 'id' => 1]) ?>
 
-    /**
-     * Registers a link tag.
-     * 
-     * @param array $options the HTML attributes for the link tag.
-     * @param string $key the key that identifies the link tag.
-     */
-    public function registerLinkTag($options, $key = null)
-    {
-    }
+<!-- Image -->
+<?= Html::img('@web/images/logo.png', ['alt' => 'Logo']) ?>
+```
 
-    /**
-     * Registers a CSS code block.
-     * 
-     * @param string $css the content of the CSS code block.
-     * @param array $options the HTML attributes for the style tag.
-     * @param string $key the key that identifies the CSS code block.
-     */
-    public function registerCss($css, $options = [], $key = null)
-    {
-    }
+## Layouts
+```php
+<!-- views/layouts/main.php -->
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <?php $this->head() ?>
+</head>
+<body>
+<?php $this->beginBody() ?>
+    <?= $content ?>
+<?php $this->endBody() ?>
+</body>
+</html>
+<?php $this->endPage() ?>
+```
 
-    /**
-     * Registers a CSS file.
-     * 
-     * @param string $url the CSS file URL.
-     * @param array $options the HTML attributes for the link tag.
-     * @param string $key the key that identifies the CSS file.
-     */
-    public function registerCssFile($url, $options = [], $key = null)
-    {
-    }
+## Widgets
+```php
+<?php $form = ActiveForm::begin(); ?>
+    <?= $form->field($model, 'username') ?>
+    <?= $form->field($model, 'password')->passwordInput() ?>
+    <?= Html::submitButton('Submit') ?>
+<?php ActiveForm::end(); ?>
+```
 
-    /**
-     * Registers a JS code block.
-     * 
-     * @param string $js the content of the JS code block.
-     * @param int $position the position at which the JS script tag should be inserted.
-     * Possible values:
-     * - View::POS_HEAD
-     * - View::POS_BEGIN
-     * - View::POS_END (default)
-     * - View::POS_READY
-     * - View::POS_LOAD
-     * @param string $key the key that identifies the JS code block.
-     */
-    public function registerJs($js, $position = self::POS_READY, $key = null)
-    {
-    }
-
-    /**
-     * Registers a JS file.
-     * 
-     * @param string $url the JS file URL.
-     * @param array $options the HTML attributes for the script tag.
-     * @param string $key the key that identifies the JS file.
-     */
-    public function registerJsFile($url, $options = [], $key = null)
-    {
-    }
-}
-
-/**
- * Common HTML Helpers used in Views.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-helpers-html
- */
-class HtmlHelperReference 
-{
-    public static function encode($content) {}
-    public static function a($text, $url = null, $options = []) {}
-    public static function img($src, $options = []) {}
-    public static function tag($name, $content = '', $options = []) {}
-}
-\n```
+## Html Helper
+```php
+Html::encode($text);                    // XSS-safe output
+Html::a($text, $url, $options);         // Link
+Html::img($src, $options);              // Image
+Html::tag($name, $content, $options);   // Generic tag
+Html::beginTag($name, $options);        // Open tag
+Html::endTag($name);                    // Close tag
+```

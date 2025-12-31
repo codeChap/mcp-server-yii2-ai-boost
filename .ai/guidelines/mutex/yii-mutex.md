@@ -1,73 +1,59 @@
+# Yii2 Mutex
+
+## Configuration
 ```php
-<?php
+// config/web.php
+'components' => [
+    'mutex' => [
+        'class' => 'yii\mutex\FileMutex', // or MysqlMutex, PgsqlMutex, RedisMutex
+    ],
+],
+```
 
-/**
- * AI Guideline: Yii 2.0 Mutex Structure
- * 
- * This file serves as a reference for using Mutex in Yii 2.
- * Mutex components allow for mutual exclusion to prevent race conditions.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-mutex-mutex
- */
+## Usage
+```php
+$mutex = Yii::$app->mutex;
 
-namespace yii\mutex;
-
-use yii\base\Component;
-
-/**
- * Mutex is the base class for mutex application components.
- * 
- * Common Backends:
- * - FileMutex
- * - MysqlMutex
- * - PgsqlMutex
- * - RedisMutex
- */
-abstract class Mutex extends Component
-{
-    /**
-     * @var bool whether to automatically release the lock when the script execution finishes.
-     */
-    public $autoRelease = true;
-
-    /**
-     * Acquires a lock by name.
-     * 
-     * @param string $name of the lock to be acquired.
-     * @param int $timeout time (in seconds) to wait for the lock to become available.
-     * @return bool whether the lock is acquired.
-     */
-    public function acquire($name, $timeout = 0)
-    {
-        return true;
+// Acquire lock (returns immediately if can't acquire)
+if ($mutex->acquire('my-lock')) {
+    try {
+        // Critical section
+    } finally {
+        $mutex->release('my-lock');
     }
-
-    /**
-     * Releases a lock by name.
-     * 
-     * @param string $name of the lock to be released.
-     * @return bool whether the lock is released.
-     */
-    public function release($name)
-    {
-        return true;
-    }
-
-    /**
-     * This method is called by `acquire()` to try to acquire the lock.
-     * 
-     * @param string $name of the lock to be acquired.
-     * @param int $timeout time (in seconds) to wait for the lock to become available.
-     * @return bool whether the lock is acquired.
-     */
-    abstract protected function acquireLock($name, $timeout = 0);
-
-    /**
-     * This method is called by `release()` to release the lock.
-     * 
-     * @param string $name of the lock to be released.
-     * @return bool whether the lock is released.
-     */
-    abstract protected function releaseLock($name);
 }
-\n```
+
+// With timeout (wait up to 10 seconds)
+if ($mutex->acquire('my-lock', 10)) {
+    // ...
+    $mutex->release('my-lock');
+}
+```
+
+## Console Command Example
+```php
+class CronController extends Controller
+{
+    public function actionProcess()
+    {
+        if (!Yii::$app->mutex->acquire('cron-process', 0)) {
+            $this->stdout("Already running\n");
+            return ExitCode::OK;
+        }
+
+        try {
+            // Process tasks...
+        } finally {
+            Yii::$app->mutex->release('cron-process');
+        }
+
+        return ExitCode::OK;
+    }
+}
+```
+
+## Available Backends
+- `FileMutex` - File-based (default)
+- `MysqlMutex` - MySQL GET_LOCK()
+- `PgsqlMutex` - PostgreSQL advisory locks
+- `RedisMutex` - Redis SETNX (via yii2-redis)

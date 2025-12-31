@@ -1,78 +1,86 @@
+# Yii2 Validation
+
+## Common Validators
 ```php
-<?php
-
-/**
- * AI Guideline: Yii 2.0 Form Validation Structure
- * 
- * This file serves as a reference for Form Validation in Yii 2.
- * It primarily relies on Model rules and validators.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-validators-validator
- */
-
-namespace yii\validators;
-
-use yii\base\Component;
-
-/**
- * Validator is the base class for all validators.
- * 
- * Common Validators:
- * - RequiredValidator ('required')
- * - EmailValidator ('email')
- * - StringValidator ('string')
- * - NumberValidator ('integer', 'double', 'number')
- * - BooleanValidator ('boolean')
- * - DateValidator ('date')
- * - UrlValidator ('url')
- * - CompareValidator ('compare')
- * - RangeValidator ('in')
- * - RegularExpressionValidator ('match')
- * - UniqueValidator ('unique')
- * - ExistValidator ('exist')
- * - SafeValidator ('safe')
- */
-class Validator extends Component
+public function rules()
 {
-    /**
-     * @var array|string attributes to be validated by this validator.
-     */
-    public $attributes;
+    return [
+        // Required
+        [['username', 'email'], 'required'],
+        
+        // Type validators
+        ['age', 'integer'],
+        ['price', 'number'],
+        ['active', 'boolean'],
+        ['name', 'string', 'min' => 2, 'max' => 255],
+        
+        // Format validators
+        ['email', 'email'],
+        ['website', 'url'],
+        ['birth_date', 'date', 'format' => 'php:Y-m-d'],
+        
+        // Comparison
+        ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+        ['age', 'compare', 'compareValue' => 18, 'operator' => '>='],
+        
+        // Range
+        ['status', 'in', 'range' => [1, 2, 3]],
+        
+        // Pattern
+        ['phone', 'match', 'pattern' => '/^\+?[0-9]{10,15}$/'],
+        
+        // Database
+        ['email', 'unique'],
+        ['category_id', 'exist', 'targetClass' => Category::class],
+        
+        // Safe (mass assignment only)
+        ['description', 'safe'],
+        
+        // Custom
+        ['field', 'validateCustom'],
+        
+        // Conditional
+        ['phone', 'required', 'when' => function($model) {
+            return $model->contact_method === 'phone';
+        }],
+    ];
+}
+```
 
-    /**
-     * @var string the user-defined error message.
-     */
-    public $message;
-
-    /**
-     * @var callable a PHP callable that replaces the default implementation of isEmpty().
-     */
-    public $isEmpty;
-
-    /**
-     * @var mixed the value that the attribute must have to be considered empty.
-     */
-    public $empty;
-
-    /**
-     * @var bool whether this validator should be skipped if the attribute value is null or empty.
-     */
-    public $skipOnEmpty = true;
-
-    /**
-     * @var bool whether this validator should be skipped if the active record being validated has any error.
-     */
-    public $skipOnError = true;
-
-    /**
-     * Validates the attribute of the object.
-     * If there is any error, the error message is added to the object.
-     * 
-     * @param \yii\base\Model $model the object being validated
-     * @param string $attribute the attribute being validated
-     */
-    public function validateAttribute($model, $attribute)
-    {
+## Custom Validator
+```php
+public function validateCustom($attribute, $params)
+{
+    if ($this->$attribute === 'invalid') {
+        $this->addError($attribute, 'Value is invalid.');
     }
 }
-\n```
+```
+
+## Validation Usage
+```php
+$model = new User();
+$model->load(Yii::$app->request->post());
+
+if ($model->validate()) {
+    $model->save(false); // Skip validation (already done)
+}
+
+// Get errors
+$model->getErrors();           // All errors
+$model->getFirstErrors();      // First error per attribute
+$model->hasErrors('email');    // Check specific attribute
+```
+
+## Scenarios
+```php
+public function scenarios()
+{
+    return [
+        'register' => ['username', 'email', 'password'],
+        'update' => ['username', 'email'],
+    ];
+}
+
+$model->scenario = 'register';
+```

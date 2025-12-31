@@ -1,73 +1,53 @@
+# Yii2 Application
+
+## Web Application Entry Point
 ```php
-<?php
+// web/index.php
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
-/**
- * AI Guideline: Yii 2.0 Application Runners
- * 
- * This file serves as a reference for Application classes in Yii 2.
- * 
- * @see https://www.yiiframework.com/doc/api/2.0/yii-web-application
- * @see https://www.yiiframework.com/doc/api/2.0/yii-console-application
- */
+$config = require __DIR__ . '/../config/web.php';
+(new yii\web\Application($config))->run();
+```
 
-namespace yii\web;
+## Console Application Entry Point
+```php
+// yii (console script)
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
-use yii\base\Application as BaseApplication;
+$config = require __DIR__ . '/config/console.php';
+$exitCode = (new yii\console\Application($config))->run();
+exit($exitCode);
+```
 
-/**
- * Web Application
- */
-class Application extends BaseApplication
-{
-    /**
-     * @var string the default route of this application. Defaults to 'site'.
-     */
-    public $defaultRoute = 'site';
+## Application Properties
+```php
+Yii::$app->id;           // Application ID
+Yii::$app->name;         // Application name
+Yii::$app->basePath;     // Base path
+Yii::$app->language;     // Current language
+Yii::$app->timeZone;     // Timezone
+Yii::$app->params;       // Custom parameters
+```
 
-    /**
-     * @var User|array|string the user component or its configuration.
-     */
-    public $user;
+## Lifecycle
+```php
+// Bootstrap
+'bootstrap' => ['log', 'myComponent'],
 
-    /**
-     * @var Session|array|string the session component or its configuration.
-     */
-    public $session;
+// Events
+Application::EVENT_BEFORE_REQUEST
+Application::EVENT_AFTER_REQUEST
+Application::EVENT_BEFORE_ACTION
+Application::EVENT_AFTER_ACTION
+```
 
-    /**
-     * Handles the specified request.
-     * 
-     * @param Request $request the request to be handled
-     * @return Response the resulting response
-     */
-    public function handleRequest($request)
-    {
-        return new Response();
-    }
-}
+## Path Aliases
+```php
+Yii::setAlias('@uploads', '@app/web/uploads');
+$path = Yii::getAlias('@uploads/file.jpg');
 
-namespace yii\console;
-
-use yii\base\Application as BaseApplication;
-
-/**
- * Console Application
- */
-class Application extends BaseApplication
-{
-    /**
-     * @var bool whether to enable the command line to read arguments.
-     */
-    public $enableCoreCommands = true;
-
-    /**
-     * Runs the console application.
-     * 
-     * @return int exit status
-     */
-    public function run()
-    {
-        return 0;
-    }
-}
-\n```
+// Built-in aliases
+// @app, @vendor, @runtime, @webroot, @web
+```

@@ -36,6 +36,16 @@ class McpController extends Controller
         // This must be done before any file operations
         $this->configureLogging();
 
+        // Show startup message only when run interactively (TTY)
+        // MCP clients pipe STDIN, so it won't be a TTY
+        if (posix_isatty(STDIN)) {
+            fwrite(STDERR, "MCP Server starting...\n");
+            fwrite(STDERR, "  - Server will appear to hang (this is normal)\n");
+            fwrite(STDERR, "  - It's waiting for JSON-RPC input on STDIN\n");
+            fwrite(STDERR, "  - Press Ctrl+C to exit\n");
+            fwrite(STDERR, "  - If no errors above, the server loaded successfully\n\n");
+        }
+
         try {
             // Log startup event to file for debugging
             $logFile = Yii::getAlias('@runtime/logs/mcp-startup.log');

@@ -1,10 +1,5 @@
 # Yii2 AI Boost - MCP Server for Yii2 Applications
 
-> **⚠️ Status: Active Development**
->
-> This project is currently in **Phase 2** of development. Core tools are ready, but features may evolve, be added or removed.
-> Feedback and contributions are welcome!
-
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 ![Yii2](https://img.shields.io/badge/Yii2-2.0.45-orange)
@@ -15,10 +10,10 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 ## Features
 
-- **7 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and **Guideline Search**
-- **Framework Guidelines** - Comprehensive Yii2 best practices and patterns (Markdown format)
-- **Editor Sync** - Automatically syncs guidelines to [Cursor](https://cursor.sh) and [Zed](https://zed.dev/) editor configurations
-- **IDE Integration** - Can be added to editors (like [Zed](https://zed.dev/)) for integration
+- **7 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and guideline search
+- **On-Demand Guidelines** - AI searches 36KB of Yii2 best practices only when needed (zero context cost until requested)
+- **Framework Guidelines** - Comprehensive Yii2 patterns covering controllers, models, migrations, caching, auth, and more
+- **IDE Integration** - Works with Claude Code, Cursor, Zed, and other MCP-compatible editors
 
 ---
 
@@ -28,12 +23,12 @@ For experienced developers:
 
 ```bash
 # 1. Install package
-composer require codechap/yii2-ai-boost:dev-master --dev
+composer require codechap/yii2-ai-boost:^1.0 --dev
 
 # 2. Run installation
 php yii boost/install
 
-# 3. Sync guidelines to your editor (Cursor/Zed)
+# 3. (Optional) Sync guidelines to your editor (Cursor/Zed)
 php yii boost/sync-rules
 ```
 
@@ -45,11 +40,9 @@ That's it! Claude Code and other AI tools now have access to your application co
 
 ### **Step 1**: Require the Package
 
-> Use "**dev-master**" untill a stable package is ready.
-
 ```bash
 cd /path/to/yii2/application
-composer require codechap/yii2-ai-boost:dev-master --dev
+composer require codechap/yii2-ai-boost:^1.0 --dev
 ```
 
 ### **Step 2**: Run Installation Wizard
@@ -235,7 +228,7 @@ Search the local Yii2 AI Guidelines database:
 
 ## Core Tools Architecture
 
-All 6 core tools provide deep introspection into your Yii2 application. They follow a consistent architecture based on the **BaseTool** abstract class, which provides:
+All 7 core tools provide deep introspection into your Yii2 application. They follow a consistent architecture based on the **BaseTool** abstract class, which provides:
 
 - **Automatic Sanitization**: Sensitive data (passwords, tokens, keys) is automatically redacted from all tool outputs
 - **Database Discovery**: Tools automatically detect and access configured database connections
@@ -264,6 +257,7 @@ The Log Inspector features a **multi-reader architecture** supporting three log 
 | **1** | **route_inspector** | ✓ Complete | URL rules, routes, REST endpoints |
 | **1** | **component_inspector** | ✓ Complete | Component listing, classes, configurations |
 | **1** | **log_inspector** | ✓ Complete | File, database, and in-memory logs with filtering |
+| **1** | **search_guidelines** | ✓ Complete | On-demand Yii2 guidelines search with categories |
 | 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
 | 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
 | 2 | database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
@@ -361,8 +355,9 @@ To use these guidelines with Claude Code or other AI tools, add the following li
 
 ```markdown
 @include .ai/guidelines/core/yii2-2.0.45.md
-@include .ai/guidelines/console/yii-console-controller.php
 ```
+
+Your AI assistant can also search additional guidelines on-demand via the `search_guidelines` MCP tool (database, cache, auth, validation, etc.).
 
 This ensures AI assistants have access to framework best practices and patterns when working in your project.
 
@@ -405,9 +400,9 @@ _This section will be expanded as common questions arise. For now, please reach 
 
 | Phase | Goal | Status | Tools |
 |-------|------|--------|-------|
-| **1** | Core MVP | ✓ Complete | 6 tools + guidelines + installer |
-| **2** | Extended Tools | In Progress | +10 tools, ecosystem guidelines |
-| **3** | Production Ready | Planned | Optimization, documentation search, stable release |
+| **1** | Core MVP | ✓ Complete | 7 tools + guidelines + installer |
+| **2** | Extended Tools | Planned | +10 tools (model inspector, validation, queries) |
+| **3** | Advanced Features | Planned | Performance profiling, behavior/event inspection |
 
 Track progress and contribute at [GitHub](https://github.com/codechap/yii2-ai-boost).
 

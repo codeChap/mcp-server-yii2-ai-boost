@@ -110,11 +110,21 @@ class InstallController extends Controller
             $basePath . '/.ai/guidelines/ecosystem',
         ];
 
+        $created = 0;
+        $existed = 0;
+        
         foreach ($directories as $dir) {
             if (!is_dir($dir)) {
                 FileHelper::createDirectory($dir);
-                $this->stdout("  ✓ Created directory: $dir\n", 32);
+                $this->stdout("  ✓ Created: $dir\n", 32);
+                $created++;
+            } else {
+                $existed++;
             }
+        }
+        
+        if ($created === 0 && $existed > 0) {
+            $this->stdout("  ✓ All directories already exist\n", 32);
         }
     }
 

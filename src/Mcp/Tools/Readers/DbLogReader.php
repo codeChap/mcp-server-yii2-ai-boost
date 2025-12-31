@@ -93,8 +93,10 @@ class DbLogReader implements LogReaderInterface
             $includeTrace = (bool) ($params['include_trace'] ?? false);
 
             // Build query
-            $db = $this->target->db;
-            $table = $this->target->logTable;
+            /** @var object $target */
+            $target = $this->target;
+            $db = $target->db;
+            $table = $target->logTable;
 
             // Count total matching records
             $countQuery = $db->createCommand(

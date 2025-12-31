@@ -33,31 +33,7 @@ class FileLogReader implements LogReaderInterface
         'profile' => Logger::LEVEL_PROFILE,
     ];
 
-    /**
-     * Reverse mapping for display
-     *
-     * @var array
-     */
-    private const LEVEL_NAMES = [
-        Logger::LEVEL_ERROR => 'error',
-        Logger::LEVEL_WARNING => 'warning',
-        Logger::LEVEL_INFO => 'info',
-        Logger::LEVEL_TRACE => 'trace',
-        Logger::LEVEL_PROFILE => 'profile',
-    ];
 
-    /**
-     * Log level short codes from Yii2
-     *
-     * @var array
-     */
-    private const LEVEL_CODES = [
-        'error' => 'error',
-        'warning' => 'warning',
-        'info' => 'info',
-        'trace' => 'trace',
-        'profile' => 'profile',
-    ];
 
     public function __construct()
     {
@@ -288,7 +264,8 @@ class FileLogReader implements LogReaderInterface
         while ($position >= 0 && $lineCount < $lines) {
             $position = max(0, $position - $chunkSize);
             fseek($handle, $position);
-            $chunk = fread($handle, min($chunkSize, $fileSize - $position));
+            $readLength = max(1, min($chunkSize, $fileSize - $position));
+            $chunk = fread($handle, $readLength);
 
             if ($chunk === false) {
                 break;
@@ -336,7 +313,7 @@ class FileLogReader implements LogReaderInterface
         $timestampStr = $matches[1];
         $levelStr = $matches[2];
         $category = $matches[3];
-        $prefix = $matches[4] ?? null;
+        $prefix = !empty($matches[4]) ? $matches[4] : null;
         $message = $matches[5];
 
         // Convert level string to code

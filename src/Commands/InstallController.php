@@ -299,10 +299,10 @@ class InstallController extends Controller
         $this->stdout("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n", 32);
 
         $this->stdout("Next steps:\n", 36);
-        $this->stdout("  1. Add Yii2 guidelines to your CLAUDE.md file:\n", 0);
+        $this->stdout("  1. (Optional) Add core guidelines to your CLAUDE.md file:\n", 0);
         $this->stdout("     @include .ai/guidelines/core/yii2-2.0.45.md\n\n", 37);
-        $this->stdout("  2. (Optional) Add ecosystem guidelines:\n", 0);
-        $this->stdout("     See .ai/guidelines/ecosystem/ for additional guidelines\n\n", 37);
+        $this->stdout("  2. Your AI assistant can search additional guidelines on-demand\n", 0);
+        $this->stdout("     via the 'search_guidelines' MCP tool (database, cache, auth, etc.)\n\n", 37);
         $this->stdout("  3. Test MCP server: php yii boost/mcp\n", 0);
         $this->stdout("  4. View configuration: php yii boost/info\n\n", 0);
 

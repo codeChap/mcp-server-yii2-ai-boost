@@ -39,7 +39,10 @@ class McpController extends Controller
         try {
             // Log startup event to file for debugging
             $logFile = Yii::getAlias('@runtime/logs/mcp-startup.log');
-            @mkdir(dirname($logFile), 0755, true);
+            $logDir = dirname($logFile);
+            if (!is_dir($logDir)) {
+                mkdir($logDir, 0755, true);
+            }
             file_put_contents($logFile, date('Y-m-d H:i:s') . " - MCP Server Starting\n", FILE_APPEND);
             file_put_contents($logFile, "  Working Directory: " . getcwd() . "\n", FILE_APPEND);
             file_put_contents($logFile, "  PHP SAPI: " . php_sapi_name() . "\n", FILE_APPEND);

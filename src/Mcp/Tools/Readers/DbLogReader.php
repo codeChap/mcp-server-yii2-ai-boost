@@ -16,9 +16,13 @@ use yii\log\Logger;
 class DbLogReader implements LogReaderInterface
 {
     /**
-     * @var DbTarget|null The DbTarget instance
+     * @var DbTarget|object|null The DbTarget instance (or compatible custom implementation)
+     * 
+     * NOTE: We use untyped property here to support custom DbTarget implementations
+     * that may not extend yii\log\DbTarget but have the same interface (logTable, db).
+     * Example: app\components\log\DbTarget
      */
-    private ?DbTarget $target = null;
+    private $target = null;
 
     /**
      * Level name to constant mapping
@@ -217,7 +221,14 @@ class DbLogReader implements LogReaderInterface
         }
 
         foreach ($dispatcher->targets as $target) {
+            // Check for DbTarget or any class that extends it (custom implementations)
             if ($target instanceof DbTarget && $target->enabled) {
+                $this->target = $target;
+                break;
+            }
+            // Also check for custom DbTarget implementations that may not extend yii\log\DbTarget
+            // but have the same interface (logTable, db properties)
+            if ($target->enabled && isset($target->logTable) && isset($target->db)) {
                 $this->target = $target;
                 break;
             }

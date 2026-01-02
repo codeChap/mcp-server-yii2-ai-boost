@@ -266,7 +266,7 @@ All logging goes to STDERR immediately and to files asynchronously. This ensures
 - **`src/Commands/McpController.php`** - MCP server starter with logging setup
 - **`src/Commands/InstallController.php`** - Installation wizard creating config files
 - **`tests/JsonRpcProtocolTest.php`** - Protocol compliance tests
-- **`phpstan.neon`** - Static analysis config (level 5, practical for Yii2)
+- **`phpstan.neon`** - Static analysis config (level 8 via composer script)
 - **`phpunit.xml`** - Test suite config with coverage reporting
 
 ## Common Development Tasks

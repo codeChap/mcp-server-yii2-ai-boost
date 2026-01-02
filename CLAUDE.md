@@ -90,7 +90,7 @@ Yii2 Application Integration
 5. **Transport Layer** (`src/Mcp/Transports/StdioTransport.php`)
    - STDIO communication (reads STDIN, writes STDOUT)
    - Completely decoupled from business logic
-   - Designed to support multiple transports via factory pattern
+   - Currently STDIO-only (no transport abstraction layer)
 
 ### Critical Architectural Patterns
 
@@ -100,7 +100,7 @@ Yii2 Application Integration
 
 **Template Method Pattern**: `BaseTool` provides common functionality (data sanitization, database discovery, logging) that all tools inherit.
 
-**Callback/Handler Pattern**: Transport uses callbacks to decouple I/O from business logic - allows easy transport swapping.
+**Callback/Handler Pattern**: Transport uses callbacks to decouple I/O from business logic.
 
 **Resource URI Schema**: Resources use URI-based addressing (`config://boost`) for extensible resource management.
 
@@ -218,7 +218,7 @@ All logging goes to STDERR immediately and to files asynchronously. This ensures
 - Simplicity for IDE integration
 - No network configuration needed
 - Security (localhost-only, no port conflicts)
-- Future: HTTP transport can be added via factory pattern
+- Sufficient for the primary use case (local IDE tooling)
 
 **Why JSON-RPC 2.0?**
 - Official MCP protocol standard
@@ -316,7 +316,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"my_tool","
 - `security_audit` - Security risk detection
 - `code_search` - Codebase pattern matching
 
-**Transport Expansion**:
+**Transport Expansion** (would require transport abstraction layer):
 - `HttpTransport` - For non-IDE MCP clients
 - `WebSocketTransport` - For real-time communication
 

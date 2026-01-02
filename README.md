@@ -260,7 +260,7 @@ The Log Inspector features a **multi-reader architecture** supporting three log 
 | **1** | **search_guidelines** | ✓ Complete | On-demand Yii2 guidelines search with categories |
 | 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
 | 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
-| 2 | database_query | 🔲 Planned | Safe read-only database queries (limited rows) |
+| 2 | database_query | 🔲 Planned | Execute database queries (limited rows) |
 | 3 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |
 | 3 | asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
 | 3 | widget_inspector | 🔲 Planned | Available widgets, usage, properties |
@@ -269,6 +269,7 @@ The Log Inspector features a **multi-reader architecture** supporting three log 
 | 4 | event_inspector | 🔲 Future | Application events, listeners, handlers |
 | 4 | cache_inspector | 🔲 Future | Cache components, performance metrics |
 | 4 | environment_analyzer | 🔲 Future | PHP configuration, extensions, system info |
+| 4 | semantic_search | 🔲 Future | Enhanced guidelines search with semantic matching |
 
 ---
 
@@ -394,6 +395,10 @@ _This section will be expanded as common questions arise. For now, please reach 
 | **PHP** | 7.4, 8.0, 8.1, 8.2, 8.3 | ✓ Tested |
 | **Yii2** | 2.0.45+ | ✓ Compatible |
 
+**Why PHP 7.4?** While PHP 7.4 is EOL, Yii2 itself still supports it. As a Yii2 extension, we maintain the same baseline to ensure developers on older Yii2 installations aren't locked out. If your Yii2 app runs, this tool should too.
+
+**Why no caching?** All introspection data is fetched fresh on every request. This is intentional - as a development tool, you need to see the current state of your application, not stale cached data. When you change a route, schema, or component, the tools should reflect that immediately.
+
 **Note**: PHP 8.4 support pending. Report any compatibility issues on [GitHub](https://github.com/codechap/yii2-ai-boost/issues).
 
 ## Development Timeline
@@ -410,11 +415,38 @@ Track progress and contribute at [GitHub](https://github.com/codechap/yii2-ai-bo
 
 BSD 3-Clause License. See LICENSE file for details.
 
+## Contributing
+
+Contributions are welcome! Here's how to get started:
+
+1. **Fork** the repository
+2. **Clone** your fork and create a branch (`git checkout -b feature/my-feature`)
+3. **Install** dependencies (`composer install`)
+4. **Make** your changes
+5. **Test** your changes (`composer test`)
+6. **Check** code style (`composer cs-check`) and fix if needed (`composer cs-fix`)
+7. **Run** static analysis (`composer analyze`)
+8. **Commit** with a clear message and **push** to your fork
+9. **Open** a Pull Request against `master`
+
+### Guidelines
+
+- Follow PSR-12 code style
+- Add tests for new functionality where practical
+- Keep changes focused - one feature/fix per PR
+- Update documentation if adding new tools or changing behavior
+
+### Areas Where Help is Appreciated
+
+- Additional test coverage (especially integration tests)
+- New tools from the [roadmap](#tools-roadmap)
+- Documentation improvements
+- Bug reports with reproduction steps
+
 ## Support & Feedback
 
 - **Bug Reports & Feature Requests**: [GitHub Issues](https://github.com/codechap/yii2-ai-boost/issues)
 - **Direct Contact**: [@codechap on X](https://x.com/codechap)
-- **Community Contributions**: Pull requests welcome!
 
 ---
 

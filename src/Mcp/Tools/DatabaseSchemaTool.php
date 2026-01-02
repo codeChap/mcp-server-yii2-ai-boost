@@ -19,7 +19,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  * - Foreign key relationships
  * - Active Record model discovery
  */
-class DatabaseSchemaTool extends BaseTool
+final class DatabaseSchemaTool extends BaseTool
 {
     public function getName(): string
     {

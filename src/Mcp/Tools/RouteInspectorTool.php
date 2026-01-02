@@ -18,7 +18,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  * - RESTful API routes
  * - Default routes
  */
-class RouteInspectorTool extends BaseTool
+final class RouteInspectorTool extends BaseTool
 {
     public function getName(): string
     {

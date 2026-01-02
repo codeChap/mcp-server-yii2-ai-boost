@@ -19,7 +19,7 @@ use yii\console\Application as ConsoleApplication;
  * - php yii boost/info     (InfoController::actionIndex)
  * - php yii boost/update   (UpdateController::actionIndex)
  */
-class Bootstrap implements BootstrapInterface
+final class Bootstrap implements BootstrapInterface
 {
     /**
      * Bootstrap method called on application initialization

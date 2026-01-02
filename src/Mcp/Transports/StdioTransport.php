@@ -15,7 +15,7 @@ namespace codechap\yii2boost\Mcp\Transports;
  * - No special framing or length prefixes
  * - Both input and output use this format
  */
-class StdioTransport
+final class StdioTransport
 {
     /**
      * @var resource Input stream resource

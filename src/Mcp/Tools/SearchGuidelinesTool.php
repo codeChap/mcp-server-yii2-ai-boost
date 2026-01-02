@@ -10,7 +10,7 @@ use yii\helpers\FileHelper;
 /**
  * Tool for searching and retrieving Yii2 AI Guidelines
  */
-class SearchGuidelinesTool extends BaseTool
+final class SearchGuidelinesTool extends BaseTool
 {
     /**
      * @var string Path to guidelines directory

@@ -19,7 +19,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  *
  * Automatically sanitizes sensitive data (passwords, keys, tokens)
  */
-class ConfigAccessTool extends BaseTool
+final class ConfigAccessTool extends BaseTool
 {
     public function getName(): string
     {

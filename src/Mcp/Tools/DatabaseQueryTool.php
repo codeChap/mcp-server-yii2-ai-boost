@@ -14,7 +14,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  * Intended for development use - allows AI assistants to explore
  * and query data during debugging and development.
  */
-class DatabaseQueryTool extends BaseTool
+final class DatabaseQueryTool extends BaseTool
 {
     /**
      * Default maximum rows to return

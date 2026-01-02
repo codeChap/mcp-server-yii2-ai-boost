@@ -12,7 +12,7 @@ use yii\log\Logger;
  *
  * Reads logs from Yii::getLogger()->messages (current request only)
  */
-class InMemoryLogReader implements LogReaderInterface
+final class InMemoryLogReader implements LogReaderInterface
 {
     /**
      * Level name to constant mapping

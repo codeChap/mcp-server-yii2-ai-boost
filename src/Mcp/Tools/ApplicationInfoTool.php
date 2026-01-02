@@ -16,7 +16,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  * - Installed modules and extensions
  * - Environment variables (sanitized)
  */
-class ApplicationInfoTool extends BaseTool
+final class ApplicationInfoTool extends BaseTool
 {
     public function getName(): string
     {

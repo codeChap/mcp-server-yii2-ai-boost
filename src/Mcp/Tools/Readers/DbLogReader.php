@@ -13,7 +13,7 @@ use yii\log\Logger;
  *
  * Reads logs from DbTarget (database log table)
  */
-class DbLogReader implements LogReaderInterface
+final class DbLogReader implements LogReaderInterface
 {
     /**
      * @var DbTarget|object|null The DbTarget instance (or compatible custom implementation)

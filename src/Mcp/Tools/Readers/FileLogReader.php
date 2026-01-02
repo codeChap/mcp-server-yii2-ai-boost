@@ -13,7 +13,7 @@ use yii\log\Logger;
  *
  * Reads logs from FileTarget (text log files)
  */
-class FileLogReader implements LogReaderInterface
+final class FileLogReader implements LogReaderInterface
 {
     /**
      * @var FileTarget|null The FileTarget instance

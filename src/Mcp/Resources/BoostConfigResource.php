@@ -11,7 +11,7 @@ use Yii;
  *
  * Provides access to the Yii2 AI Boost configuration
  */
-class BoostConfigResource extends BaseResource
+final class BoostConfigResource extends BaseResource
 {
     public function getName(): string
     {

@@ -17,7 +17,7 @@ use codechap\yii2boost\Mcp\Tools\Readers\LogReaderInterface;
  * (FileTarget, DbTarget, and in-memory logs), with support for filtering
  * by level, category, time range, and keyword search.
  */
-class LogInspectorTool extends BaseTool
+final class LogInspectorTool extends BaseTool
 {
     public function getName(): string
     {

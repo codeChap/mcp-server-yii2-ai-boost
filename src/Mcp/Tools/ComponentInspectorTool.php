@@ -16,7 +16,7 @@ use codechap\yii2boost\Mcp\Tools\Base\BaseTool;
  * - Bootstrap status
  * - Singleton vs new instance behavior
  */
-class ComponentInspectorTool extends BaseTool
+final class ComponentInspectorTool extends BaseTool
 {
     public function getName(): string
     {

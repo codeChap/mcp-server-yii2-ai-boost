@@ -455,6 +455,7 @@ class Server extends Component
         $toolClasses = [
             Tools\ApplicationInfoTool::class,
             Tools\DatabaseSchemaTool::class,
+            Tools\DatabaseQueryTool::class,
             Tools\ConfigAccessTool::class,
             Tools\RouteInspectorTool::class,
             Tools\ComponentInspectorTool::class,

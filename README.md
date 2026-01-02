@@ -10,7 +10,7 @@ Yii2 AI Boost is a Model Context Protocol (MCP) server that provides AI assistan
 
 ## Features
 
-- **7 Core MCP Tools** - Database inspection, config access, route analysis, component introspection, logging, and guideline search
+- **8 Core MCP Tools** - Database inspection and queries, config access, route analysis, component introspection, logging, and guideline search
 - **On-Demand Guidelines** - AI searches 36KB of Yii2 best practices only when needed (zero context cost until requested)
 - **Framework Guidelines** - Comprehensive Yii2 patterns covering controllers, models, migrations, caching, auth, and more
 - **IDE Integration** - Works with Claude Code, Cursor, Zed, and other MCP-compatible editors
@@ -188,27 +188,34 @@ Inspect your database structure:
 - Discover Active Record models
 - View indexes and foreign keys
 
-### 3. `config_access` - Config Access
+### 3. `database_query` - Database Query
+Execute SQL queries against your database:
+- Run SELECT queries with automatic row limiting
+- Support for bound parameters
+- Returns execution time and row count
+- Works with any configured database connection
+
+### 4. `config_access` - Config Access
 Access application configuration safely:
 - Component configurations
 - Module configurations
 - Application parameters (with sensitive data redaction)
 
-### 4. `route_inspector` - Route Inspector
+### 5. `route_inspector` - Route Inspector
 Analyze your application routes:
 - URL rules and patterns
 - Module routes with prefixes
 - Controller and action mappings
 - RESTful API endpoints
 
-### 5. `component_inspector` - Component Inspector
+### 6. `component_inspector` - Component Inspector
 Introspect application components:
 - List all registered components
 - View component classes and configurations
 - Check singleton vs new instance behavior
 - Inspect component properties
 
-### 6. `log_inspector` - Log Inspector
+### 7. `log_inspector` - Log Inspector
 Inspect application logs from all configured sources:
 - Read logs from FileTarget (text files)
 - Read logs from DbTarget (database table)
@@ -219,7 +226,7 @@ Inspect application logs from all configured sources:
 - Filter by time range
 - View stack traces (for in-memory logs)
 
-### 7. `search_guidelines` - Guideline Search
+### 8. `search_guidelines` - Guideline Search
 Search the local Yii2 AI Guidelines database:
 - Find best practices for Controllers, Models, Migrations, etc.
 - Retrieve structural reference code to prevent hallucinations
@@ -228,7 +235,7 @@ Search the local Yii2 AI Guidelines database:
 
 ## Core Tools Architecture
 
-All 7 core tools provide deep introspection into your Yii2 application. They follow a consistent architecture based on the **BaseTool** abstract class, which provides:
+All 8 core tools provide deep introspection into your Yii2 application. They follow a consistent architecture based on the **BaseTool** abstract class, which provides:
 
 - **Automatic Sanitization**: Sensitive data (passwords, tokens, keys) is automatically redacted from all tool outputs
 - **Database Discovery**: Tools automatically detect and access configured database connections
@@ -258,9 +265,9 @@ The Log Inspector features a **multi-reader architecture** supporting three log 
 | **1** | **component_inspector** | ✓ Complete | Component listing, classes, configurations |
 | **1** | **log_inspector** | ✓ Complete | File, database, and in-memory logs with filtering |
 | **1** | **search_guidelines** | ✓ Complete | On-demand Yii2 guidelines search with categories |
+| **1** | **database_query** | ✓ Complete | Execute database queries (limited rows) |
 | 2 | model_inspector | 🔲 Planned | Active Record model analysis, properties, relations |
 | 2 | validation_rules | 🔲 Planned | Model validation rules, error messages, constraints |
-| 2 | database_query | 🔲 Planned | Execute database queries (limited rows) |
 | 3 | migration_inspector | 🔲 Planned | List migrations, status, rollback history |
 | 3 | asset_manager | 🔲 Planned | Asset bundles, dependencies, registration status |
 | 3 | widget_inspector | 🔲 Planned | Available widgets, usage, properties |
@@ -405,7 +412,7 @@ _This section will be expanded as common questions arise. For now, please reach 
 
 | Phase | Goal | Status | Tools |
 |-------|------|--------|-------|
-| **1** | Core MVP | ✓ Complete | 7 tools + guidelines + installer |
+| **1** | Core MVP | ✓ Complete | 8 tools + guidelines + installer |
 | **2** | Extended Tools | Planned | +10 tools (model inspector, validation, queries) |
 | **3** | Advanced Features | Planned | Performance profiling, behavior/event inspection |
 

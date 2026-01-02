@@ -74,7 +74,8 @@ class ComponentInspectorTool extends BaseTool
                     $components[$id] = $this->getComponentDetails($id, $includeConfig);
                 } catch (\Exception $e) {
                     // Log error but continue processing other components
-                    fwrite(STDERR, "[ComponentInspector] Error getting details for component '$id': " . $e->getMessage() . "\n");
+                    $msg = "[ComponentInspector] Error getting details for component '$id': ";
+                    fwrite(STDERR, $msg . $e->getMessage() . "\n");
                     $components[$id] = [
                         'id' => $id,
                         'error' => $e->getMessage(),
@@ -116,9 +117,17 @@ class ComponentInspectorTool extends BaseTool
             // Component couldn't be loaded
         }
 
+        // Determine class name from component instance or definition
+        $className = 'unknown';
+        if ($component) {
+            $className = get_class($component);
+        } elseif (is_array($componentDef)) {
+            $className = $componentDef['class'] ?? 'unknown';
+        }
+
         $details = [
             'id' => $id,
-            'class' => $component ? get_class($component) : (is_array($componentDef) ? $componentDef['class'] ?? 'unknown' : 'unknown'),
+            'class' => $className,
             'is_loaded' => $component !== null,
         ];
 

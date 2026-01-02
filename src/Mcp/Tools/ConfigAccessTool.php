@@ -28,7 +28,8 @@ class ConfigAccessTool extends BaseTool
 
     public function getDescription(): string
     {
-        return 'Access application configuration including components, modules, and parameters (with sensitive data redaction)';
+        return 'Access application configuration including components, modules, and parameters ' .
+            '(with sensitive data redaction)';
     }
 
     public function getInputSchema(): array

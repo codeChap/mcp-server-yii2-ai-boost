@@ -108,7 +108,7 @@ class InstallController extends Controller
 
         $created = 0;
         $existed = 0;
-        
+
         foreach ($directories as $dir) {
             if (!is_dir($dir)) {
                 FileHelper::createDirectory($dir);
@@ -118,7 +118,7 @@ class InstallController extends Controller
                 $existed++;
             }
         }
-        
+
         if ($created === 0 && $existed > 0) {
             $this->stdout("  ✓ All directories already exist\n", 32);
         }
@@ -258,7 +258,7 @@ class InstallController extends Controller
     {
         $appBasePath = Yii::getAlias('@app');
         $targetPath = $appBasePath . '/.ai/guidelines';
-        
+
         // Determine package root (vendor/codechap/yii2-ai-boost)
         // This file is in src/Commands/InstallController.php
         $packageRoot = dirname(__DIR__, 2);
@@ -277,16 +277,18 @@ class InstallController extends Controller
         } else {
             // Fallback if source not found (e.g. slight difference in dev vs prod structure)
             $this->stdout("  ! Guidelines source not found at: $sourcePath\n", 33);
-            
+
             // Create placeholder
             $placeholderPath = $targetPath . '/core';
             if (!is_dir($placeholderPath)) {
                 FileHelper::createDirectory($placeholderPath);
             }
-            
+
             $placeholderFile = $placeholderPath . '/yii2-2.0.45.md';
             if (!file_exists($placeholderFile)) {
-                file_put_contents($placeholderFile, "# Yii2 Framework Guidelines\n\n[Guidelines could not be copied automatically]\n");
+                $content = "# Yii2 Framework Guidelines\n\n";
+                $content .= "[Guidelines could not be copied automatically]\n";
+                file_put_contents($placeholderFile, $content);
                 $this->stdout("  ✓ Created guidelines placeholder\n", 32);
             }
         }
@@ -308,7 +310,8 @@ class InstallController extends Controller
         $this->stdout("  1. (Optional) Add core guidelines to your CLAUDE.md file:\n", 0);
         $this->stdout("     @include .ai/guidelines/core/yii2-2.0.45.md\n\n", 37);
         $this->stdout("  2. Your AI assistant can search additional guidelines on-demand\n", 0);
-        $this->stdout("     via the 'search_guidelines' MCP tool (database, cache, auth, etc.)\n\n", 37);
+        $this->stdout("     via the 'search_guidelines' MCP tool\n", 37);
+        $this->stdout("     (database, cache, auth, etc.)\n\n", 37);
         $this->stdout("  3. Test MCP server: php yii boost/mcp\n", 0);
         $this->stdout("  4. View configuration: php yii boost/info\n\n", 0);
 

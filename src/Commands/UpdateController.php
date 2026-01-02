@@ -55,7 +55,7 @@ class UpdateController extends Controller
     {
         $appPath = Yii::getAlias('@app');
         $targetPath = $appPath . '/.ai/guidelines';
-        
+
         // Locate source directory relative to this file
         // src/Commands/UpdateController.php -> .ai/guidelines
         $packageRoot = dirname(__DIR__, 2);
@@ -67,7 +67,7 @@ class UpdateController extends Controller
         }
 
         $this->stdout("  Copying guidelines from package...\n", 0);
-        
+
         try {
             \yii\helpers\FileHelper::copyDirectory($sourcePath, $targetPath, [
                 'dirMode' => 0755,

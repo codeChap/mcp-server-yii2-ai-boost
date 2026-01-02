@@ -39,7 +39,7 @@ class StdioTransport
 
     /**
      * Constructor - initialize streams
-     * 
+     *
      * @param string|null $basePath Application base path for logging
      */
     public function __construct(?string $basePath = null)
@@ -66,7 +66,7 @@ class StdioTransport
             if (!is_dir($runtimeLogDir)) {
                 @mkdir($runtimeLogDir, 0755, true);
             }
-            
+
             if (is_dir($runtimeLogDir) && is_writable($runtimeLogDir)) {
                 return $runtimeLogDir . '/mcp-transport.log';
             }

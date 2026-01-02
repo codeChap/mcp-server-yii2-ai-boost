@@ -26,7 +26,8 @@ class LogInspectorTool extends BaseTool
 
     public function getDescription(): string
     {
-        return 'Inspect application logs from all configured targets (file, database, memory) with filtering by level, category, time range, and keywords';
+        return 'Inspect application logs from all configured targets (file, database, memory) ' .
+            'with filtering by level, category, time range, and keywords';
     }
 
     public function getInputSchema(): array
@@ -50,11 +51,12 @@ class LogInspectorTool extends BaseTool
                 'categories' => [
                     'type' => 'array',
                     'items' => ['type' => 'string'],
-                    'description' => 'Category patterns to match (supports wildcards like yii\\db\\*). Default: all categories',
+                    'description' => 'Category patterns to match (supports wildcards like ' .
+                        'yii\\db\\*). Default: all categories',
                 ],
                 'limit' => [
                     'type' => 'integer',
-                    'description' => 'Maximum number of log entries to return (default: 100, max: 1000)',
+                    'description' => 'Maximum log entries to return (default: 100, max: 1000)',
                     'minimum' => 1,
                     'maximum' => 1000,
                 ],
@@ -140,7 +142,7 @@ class LogInspectorTool extends BaseTool
             }
 
             $allLogs = array_merge($allLogs, $result['logs'] ?? []);
-            
+
             // Sum up total available logs from all sources
             if (isset($result['summary']['total_available'])) {
                 $totalAvailable += (int)$result['summary']['total_available'];
@@ -196,8 +198,12 @@ class LogInspectorTool extends BaseTool
      * @param int $totalAvailable Total logs available across all sources
      * @return array
      */
-    private function buildSummary(array $paginatedLogs, array $allLogs, array $targetsQueried, int $totalAvailable): array
-    {
+    private function buildSummary(
+        array $paginatedLogs,
+        array $allLogs,
+        array $targetsQueried,
+        int $totalAvailable
+    ): array {
         $levelsFound = [];
         $earliestTime = null;
         $latestTime = null;

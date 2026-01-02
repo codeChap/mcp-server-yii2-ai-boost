@@ -17,7 +17,7 @@ class DbLogReader implements LogReaderInterface
 {
     /**
      * @var DbTarget|object|null The DbTarget instance (or compatible custom implementation)
-     * 
+     *
      * NOTE: We use untyped property here to support custom DbTarget implementations
      * that may not extend yii\log\DbTarget but have the same interface (logTable, db).
      * Example: app\components\log\DbTarget

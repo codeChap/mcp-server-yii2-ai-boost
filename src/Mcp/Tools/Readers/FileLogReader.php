@@ -302,11 +302,13 @@ class FileLogReader implements LogReaderInterface
     private function parseLine(string $line): ?array
     {
         // Match log line format: [timestamp] [level] [category] [prefix] message
-        if (!preg_match(
-            '/^\[([^\]]+)\]\s+\[([^\]]+)\]\s+\[([^\]]+)\]\s*(?:\[([^\]]+)\])?\s+(.*)/s',
-            $line,
-            $matches
-        )) {
+        if (
+            !preg_match(
+                '/^\[([^\]]+)\]\s+\[([^\]]+)\]\s+\[([^\]]+)\]\s*(?:\[([^\]]+)\])?\s+(.*)/s',
+                $line,
+                $matches
+            )
+        ) {
             return null;
         }
 

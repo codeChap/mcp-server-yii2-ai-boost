@@ -56,7 +56,9 @@ class McpController extends Controller
             file_put_contents($logFile, date('Y-m-d H:i:s') . " - MCP Server Starting\n", FILE_APPEND);
             file_put_contents($logFile, "  Working Directory: " . getcwd() . "\n", FILE_APPEND);
             file_put_contents($logFile, "  PHP SAPI: " . php_sapi_name() . "\n", FILE_APPEND);
-            file_put_contents($logFile, "  Environment: YII_ENV=" . YII_ENV . ", YII_DEBUG=" . (YII_DEBUG ? 'true' : 'false') . "\n", FILE_APPEND);
+            $debugVal = YII_DEBUG ? 'true' : 'false';
+            $envLine = "  Environment: YII_ENV=" . YII_ENV . ", YII_DEBUG=" . $debugVal . "\n";
+            file_put_contents($logFile, $envLine, FILE_APPEND);
 
             // Create and start the MCP server
             $server = new Server([

@@ -25,7 +25,8 @@ class ApplicationInfoTool extends BaseTool
 
     public function getDescription(): string
     {
-        return 'Get comprehensive information about the Yii2 application including version, environment, modules, and extensions';
+        return 'Get comprehensive information about the Yii2 application including version, ' .
+            'environment, modules, and extensions';
     }
 
     public function getInputSchema(): array

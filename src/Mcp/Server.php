@@ -209,7 +209,8 @@ class Server extends Component
                 ],
             ]);
 
-            $this->log("Error Response: " . substr($response, 0, 300) . (strlen($response) > 300 ? '...' : ''), "ERROR");
+            $preview = substr($response, 0, 300) . (strlen($response) > 300 ? '...' : '');
+            $this->log("Error Response: " . $preview, "ERROR");
 
             return $response;
         }

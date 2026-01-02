@@ -30,7 +30,9 @@ class SearchGuidelinesTool extends BaseTool
 
     public function getDescription(): string
     {
-        return 'Searches the local Yii2 AI Guidelines database for framework-specific context, best practices, and code examples. Use this when the user asks "How do I..." questions about Yii2.';
+        return 'Searches the local Yii2 AI Guidelines database for framework-specific context, ' .
+            'best practices, and code examples. Use this when the user asks "How do I..." ' .
+            'questions about Yii2.';
     }
 
     public function getInputSchema(): array
@@ -40,7 +42,8 @@ class SearchGuidelinesTool extends BaseTool
             'properties' => [
                 'query' => [
                     'type' => 'string',
-                    'description' => 'The search term (e.g., "migration", "active record", "controller"). Leave empty to list all available topics.',
+                    'description' => 'The search term (e.g., "migration", "active record"). ' .
+                        'Leave empty to list all available topics.',
                 ],
                 'category' => [
                     'type' => 'string',
@@ -49,10 +52,10 @@ class SearchGuidelinesTool extends BaseTool
                         'views_templating', 'forms_validation', 'auth_rbac',
                         'cache', 'container_proxy', 'event', 'framework_specific',
                         'internationalization', 'logging', 'mailer', 'mutex',
-                        'queue_tasks', 'runners', 'third_party'
+                        'queue_tasks', 'runners', 'third_party',
                     ],
                     'description' => 'Optional category to filter results',
-                    'default' => 'all'
+                    'default' => 'all',
                 ]
             ],
             'required' => [],

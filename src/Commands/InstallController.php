@@ -32,25 +32,21 @@ class InstallController extends Controller
 
         try {
             // Step 1: Detect environment
-            $this->stdout("[1/5] Detecting Environment\n", 33);
+            $this->stdout("[1/4] Detecting Environment\n", 33);
             $envInfo = $this->detectEnvironment();
             $this->outputEnvironmentInfo($envInfo);
 
             // Step 2: Create directories
-            $this->stdout("\n[2/5] Creating Directories\n", 33);
+            $this->stdout("\n[2/4] Creating Directories\n", 33);
             $this->createDirectories();
 
             // Step 3: Generate configuration files
-            $this->stdout("\n[3/5] Generating Configuration Files\n", 33);
+            $this->stdout("\n[3/4] Generating Configuration Files\n", 33);
             $this->generateConfigFiles($envInfo);
 
             // Step 4: Set guidelines
-            $this->stdout("\n[4/5] Setting Guidelines\n", 33);
+            $this->stdout("\n[4/4] Setting Guidelines\n", 33);
             $this->setGuidelines();
-
-            // Step 5: Register autoload
-            $this->stdout("\n[5/5] Registering Package\n", 33);
-            $this->stdout("✓ Package auto-discovery enabled via Composer bootstrap\n", 32);
 
             // Success message
             $this->outputSuccessMessage($envInfo);

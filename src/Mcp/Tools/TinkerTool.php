@@ -159,18 +159,22 @@ final class TinkerTool extends BaseTool
         try {
             // Execute in isolated closure scope so eval'd code can't access $this or local vars
             $returnValue = (static function () use ($code) {
+                // If the user already wrote a top-level `return`, run as statement(s).
+                // Wrapping such code with `return <code>;` would silently swallow
+                // everything after the first assignment, because `return $x = expr;`
+                // is valid PHP that returns immediately — leaving any later
+                // explicit `return` unreachable.
+                if (self::hasTopLevelReturn($code)) {
+                    return eval(self::ensureTrailingSemicolon($code));
+                }
+
                 // Try as expression first (return $code;)
                 // If the code is a statement (echo, etc.), this throws ParseError
                 try {
                     return eval('return ' . $code . ';');
                 } catch (\ParseError $e) {
                     // Not a valid expression — execute as statement(s)
-                    // Ensure trailing semicolon for statement execution
-                    $stmtCode = rtrim($code);
-                    if (!preg_match('/[;\}\)]\s*$/', $stmtCode)) {
-                        $stmtCode .= ';';
-                    }
-                    return eval($stmtCode);
+                    return eval(self::ensureTrailingSemicolon($code));
                 }
             })();
 
@@ -188,6 +192,49 @@ final class TinkerTool extends BaseTool
             'output' => $output,
             'type' => is_object($returnValue) ? get_class($returnValue) : gettype($returnValue),
         ];
+    }
+
+    /**
+     * Detect whether the user's code contains a `return` keyword at the top
+     * lexical level (i.e. not inside a function/closure/class body). Uses
+     * token_get_all so `;` or `return` inside strings, comments, or heredocs
+     * don't trip the check.
+     */
+    private static function hasTopLevelReturn(string $code): bool
+    {
+        $tokens = @token_get_all('<?php ' . $code);
+        if (!is_array($tokens)) {
+            return false;
+        }
+
+        $depth = 0;
+        foreach ($tokens as $token) {
+            if (is_array($token)) {
+                if ($depth === 0 && $token[0] === T_RETURN) {
+                    return true;
+                }
+                continue;
+            }
+            if ($token === '(' || $token === '{' || $token === '[') {
+                $depth++;
+            } elseif ($token === ')' || $token === '}' || $token === ']') {
+                $depth--;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Append a trailing `;` when the code doesn't already end with one of
+     * `;`, `}`, or `)` — required so eval() accepts the final statement.
+     */
+    private static function ensureTrailingSemicolon(string $code): string
+    {
+        $trimmed = rtrim($code);
+        if (!preg_match('/[;\}\)]\s*$/', $trimmed)) {
+            $trimmed .= ';';
+        }
+        return $trimmed;
     }
 
     /**

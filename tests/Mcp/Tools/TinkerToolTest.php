@@ -104,6 +104,53 @@ class TinkerToolTest extends ToolTestCase
         $this->assertStringContainsString('output', $result['output']);
     }
 
+    public function testMultiStatementWithExplicitReturn(): void
+    {
+        $result = $this->tool->execute([
+            'code' => '$x = 10; $y = 20; return $x + $y;',
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(30, $result['return_value']);
+    }
+
+    public function testAssignmentBeforeReturnDoesNotShadowFinalReturn(): void
+    {
+        // Regression: previously the expression-wrap (`return <code>;`) would
+        // parse `return $first = "wrong";` and return immediately, leaving the
+        // explicit final `return` unreachable.
+        $result = $this->tool->execute([
+            'code' => '$first = "wrong"; $second = "right"; return ["value" => $second];',
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(['value' => 'right'], $result['return_value']);
+    }
+
+    public function testCollectorPatternWithImplodeReturn(): void
+    {
+        // Regression: the real-world failure case — building a list and
+        // returning it via implode at the end.
+        $result = $this->tool->execute([
+            'code' => '$out = []; $out[] = "a"; $out[] = "b"; return implode(",", $out);',
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertSame('a,b', $result['return_value']);
+    }
+
+    public function testReturnInsideClosureDoesNotBlockExpressionWrap(): void
+    {
+        // A `return` nested inside a closure body should NOT be treated as a
+        // top-level return, so the bare expression still gets wrapped.
+        $result = $this->tool->execute([
+            'code' => '(function () { return 7; })()',
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(7, $result['return_value']);
+    }
+
     public function testExceptionHandling(): void
     {
         $result = $this->tool->execute([
